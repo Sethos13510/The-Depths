@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration API TikTok - THE-DEPTHS AI</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #252525;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #ff3366;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #ff9900;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+        p.description {
+            color: #bbb;
+            margin-bottom: 25px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ddd;
+            font-weight: bold;
+        }
+        .help-text {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #ff3366;
+            color: #fff;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #e6004c;
+        }
+        .status {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        .success {
+            background-color: rgba(0, 128, 0, 0.2);
+            color: #4caf50;
+        }
+        .error {
+            background-color: rgba(128, 0, 0, 0.2);
+            color: #f44336;
+        }
+        .card {
+            background-color: #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #444;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            background-color: #333;
+            color: #ddd;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: #ff3366;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #555;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #ff3366;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .toggle-label {
+            flex-grow: 1;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        .input-group input, .input-group select {
+            flex-grow: 1;
+        }
+        .input-group-addon {
+            background-color: #444;
+            border-radius: 0 5px 5px 0;
+            padding: 0 10px;
+            display: flex;
+            align-items: center;
+            color: #bbb;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #ff9900;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Configuration de l'API TikTok</h1>
+        <p class="description">Configurez l'intÃƒÆ’Ã‚Â©gration avec TikTok Live pour permettre aux spectateurs d'interagir avec l'expÃƒÆ’Ã‚Â©rience en temps rÃƒÆ’Ã‚Â©el ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  travers leurs dons, abonnements et messages.</p>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="connection">Connexion API</button>
+            <button class="tab" data-tab="mapping">ParamÃƒÆ’Ã‚Â¨tres d'Interaction</button>
+            <button class="tab" data-tab="testing">Test & DÃƒÆ’Ã‚Â©bogage</button>
+        </div>
+        
+        <div id="status" class="status"></div>
+        
+        <div id="connection" class="tab-content active">
+            <h2>Connexion ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l'API TikTok</h2>
+            
+            <div class="form-group">
+                <label for="api-provider">Fournisseur d'API:</label>
+                <select id="api-provider">
+                    <option value="tiktok-live">TikTok Live Connector</option>
+                    <option value="tikfinity">TikFinity</option>
+                    <option value="tiktok-dev">TikTok Developer API</option>
+                    <option value="custom">API PersonnalisÃƒÆ’Ã‚Â©e</option>
+                </select>
+                <span class="help-text">Choisissez le fournisseur d'API que vous utilisez pour l'intÃƒÆ’Ã‚Â©gration TikTok.</span>
+            </div>
+            
+            <div id="card-connection-live" class="card">
+                <div class="form-group">
+                    <label for="tiktok-username">Nom d'utilisateur TikTok:</label>
+                    <div class="input-group">
+                        <div class="input-group-addon">@</div>
+                        <input type="text" id="tiktok-username" placeholder="votre_compte">
+                    </div>
+                    <span class="help-text">Le nom d'utilisateur du compte TikTok dont vous souhaitez recevoir les ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nements.</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°tat de la connexion:</label>
+                    <div id="connection-status" style="padding: 10px; background-color: #333; border-radius: 5px; color: #ff9900;">
+                        Non connectÃƒÆ’Ã‚Â©
+                    </div>
+                </div>
+                
+                <button id="connect-to-live" style="margin-top: 10px;">Connecter au Live TikTok</button>
+            </div>
+            
+            <div id="card-connection-api" class="card" style="display:none;">
+                <div class="form-group">
+                    <label for="api-key">ClÃƒÆ’Ã‚Â© API:</label>
+                    <input type="password" id="api-key" placeholder="Entrez votre clÃƒÆ’Ã‚Â© API">
+                    <span class="help-text">ClÃƒÆ’Ã‚Â© d'API fournie par le service d'intÃƒÆ’Ã‚Â©gration TikTok.</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="api-secret">Secret API:</label>
+                    <input type="password" id="api-secret" placeholder="Entrez votre secret API">
+                    <span class="help-text">Secret associÃƒÆ’Ã‚Â© ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  votre clÃƒÆ’Ã‚Â© d'API pour l'authentification sÃƒÆ’Ã‚Â©curisÃƒÆ’Ã‚Â©e.</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="webhook-url">URL du Webhook (Callback):</label>
+                    <input type="text" id="webhook-url" placeholder="https://votre-domaine.com/tiktok-webhook">
+                    <span class="help-text">URL de callback ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  configurer dans le dashboard de TikTok/TikFinity.</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="mapping" class="tab-content">
+            <h2>ParamÃƒÆ’Ã‚Â¨tres d'Interaction</h2>
+            
+            <div class="toggle-container">
+                <span class="toggle-label">Activer les dons</span>
+                <label class="switch">
+                    <input type="checkbox" id="enable-donations" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="card">
+                <h3>Configuration des Dons</h3>
+                <div class="form-group">
+                    <label for="donation-conversion">Taux de conversion PiÃƒÆ’Ã‚Â¨ces/Diamants TikTok ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ EUR:</label>
+                    <div class="input-group">
+                        <input type="number" id="donation-conversion" value="0.01" step="0.001" min="0.001">
+                        <div class="input-group-addon">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ par piÃƒÆ’Ã‚Â¨ce</div>
+                    </div>
+                    <span class="help-text">DÃƒÆ’Ã‚Â©finissez combien vaut 1 piÃƒÆ’Ã‚Â¨ce/diamant TikTok en euros pour l'application.</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="donation-minimum">Montant minimum pour dÃƒÆ’Ã‚Â©clencher une action (en piÃƒÆ’Ã‚Â¨ces):</label>
+                    <input type="number" id="donation-minimum" value="5" min="1">
+                    <span class="help-text">Les dons en dessous de ce montant n'activeront pas d'effets spÃƒÆ’Ã‚Â©ciaux.</span>
+                </div>
+            </div>
+            
+            <div class="toggle-container">
+                <span class="toggle-label">Activer les abonnements</span>
+                <label class="switch">
+                    <input type="checkbox" id="enable-subscriptions" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="card">
+                <h3>Configuration des Abonnements</h3>
+                <div class="form-group">
+                    <label for="subscription-value">Valeur d'un abonnement en euros:</label>
+                    <div class="input-group">
+                        <input type="number" id="subscription-value" value="4.99" step="0.01" min="0">
+                        <div class="input-group-addon">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬</div>
+                    </div>
+                    <span class="help-text">Montant ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  ajouter ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  la progression narrative quand quelqu'un s'abonne.</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subscription-gift-multiplier">Multiplicateur pour les cadeaux d'abonnement:</label>
+                    <input type="number" id="subscription-gift-multiplier" value="0.8" step="0.1" min="0">
+                    <span class="help-text">Facteur multiplicateur appliquÃƒÆ’Ã‚Â© ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  la valeur d'abonnement pour les cadeaux (ex: 0.8 = 80% de la valeur).</span>
+                </div>
+            </div>
+            
+            <div class="toggle-container">
+                <span class="toggle-label">Activer les commentaires</span>
+                <label class="switch">
+                    <input type="checkbox" id="enable-comments" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="card">
+                <h3>Configuration des Commentaires</h3>
+                <div class="form-group">
+                    <label for="keyword-triggers">Mots-clÃƒÆ’Ã‚Â©s dÃƒÆ’Ã‚Â©clencheurs (sÃƒÆ’Ã‚Â©parÃƒÆ’Ã‚Â©s par des virgules):</label>
+                    <textarea id="keyword-triggers" placeholder="mystÃƒÆ’Ã‚Â¨re, indice, porte, exploration">mystÃƒÆ’Ã‚Â¨re, indice, porte, exploration, lumiÃƒÆ’Ã‚Â¨re, ombre, crÃƒÆ’Ã‚Â©ature, eau, profondeur, secret</textarea>
+                    <span class="help-text">Les commentaires contenant ces mots-clÃƒÆ’Ã‚Â©s pourront dÃƒÆ’Ã‚Â©clencher des ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nements dans l'expÃƒÆ’Ã‚Â©rience.</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="comment-cooldown">Temps minimum entre les dÃƒÆ’Ã‚Â©clenchements (secondes):</label>
+                    <input type="number" id="comment-cooldown" value="30" min="0">
+                    <span class="help-text">DÃƒÆ’Ã‚Â©lai minimum entre deux dÃƒÆ’Ã‚Â©clenchements basÃƒÆ’Ã‚Â©s sur des commentaires pour ÃƒÆ’Ã‚Â©viter le spam.</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="testing" class="tab-content">
+            <h2>Test et DÃƒÆ’Ã‚Â©bogage</h2>
+            
+            <div class="card">
+                <h3>ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°tat de la connexion</h3>
+                <div class="form-group">
+                    <label>Statut actuel:</label>
+                    <div id="connection-status" style="padding: 10px; background-color: #333; border-radius: 5px; color: #ff9900;">
+                        Non connectÃƒÆ’Ã‚Â©
+                    </div>
+                </div>
+                
+                <button id="test-connection">Tester la connexion</button>
+            </div>
+            
+            <div class="card">
+                <h3>Simuler des ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nements</h3>
+                <div class="form-group">
+                    <label for="test-event-type">Type d'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement:</label>
+                    <select id="test-event-type">
+                        <option value="donation">Don</option>
+                        <option value="subscription">Abonnement</option>
+                        <option value="comment">Commentaire</option>
+                        <option value="follow">Nouvel abonnÃƒÆ’Ã‚Â©</option>
+                        <option value="share">Partage</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="test-username">Nom d'utilisateur:</label>
+                    <input type="text" id="test-username" value="TestUser123">
+                </div>
+                
+                <div class="form-group test-donation-fields">
+                    <label for="test-amount">Montant (piÃƒÆ’Ã‚Â¨ces/diamants):</label>
+                    <input type="number" id="test-amount" value="100" min="1">
+                </div>
+                
+                <div class="form-group test-comment-fields" style="display: none;">
+                    <label for="test-comment">Contenu du commentaire:</label>
+                    <input type="text" id="test-comment" value="Explorez la porte mystÃƒÆ’Ã‚Â©rieuse !">
+                </div>
+                
+                <button id="send-test-event">Envoyer l'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement de test</button>
+            </div>
+            
+            <div class="card">
+                <h3>Journal des ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nements</h3>
+                <div id="event-log" style="background-color: #222; height: 200px; overflow-y: auto; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; color: #ddd;">
+                    <!-- Le journal des ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nements sera affichÃƒÆ’Ã‚Â© ici -->
+                    <div style="color: #999;">[SystÃƒÆ’Ã‚Â¨me] Journal des ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nements initialisÃƒÆ’Ã‚Â©...</div>
+                </div>
+            </div>
+        </div>
+        
+        <button id="save-config">Enregistrer la configuration</button>
+        
+        <a href="sethos_ai.html" class="back-link">Retour ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l'application principale</a>
+    </div>
+    
+    <!-- Charger Socket.IO -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    
+    <script>
+        // Variables globales
+        let socket;
+        let tiktokUsername = '';
+        let isConnected = false;
+        
+        // Attendre que le DOM soit chargÃƒÆ’Ã‚Â©
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion des onglets
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // DÃƒÆ’Ã‚Â©sactiver tous les onglets et contenus
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Activer l'onglet cliquÃƒÆ’Ã‚Â© et son contenu
+                    tab.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Affichage conditionnel des champs de test
+            const testEventType = document.getElementById('test-event-type');
+            const donationFields = document.querySelector('.test-donation-fields');
+            const commentFields = document.querySelector('.test-comment-fields');
+            
+            testEventType.addEventListener('change', () => {
+                if (testEventType.value === 'donation') {
+                    donationFields.style.display = 'block';
+                    commentFields.style.display = 'none';
+                } else if (testEventType.value === 'comment') {
+                    donationFields.style.display = 'none';
+                    commentFields.style.display = 'block';
+                } else {
+                    donationFields.style.display = 'none';
+                    commentFields.style.display = 'none';
+                }
+            });
+            
+            // Charger la configuration depuis localStorage s'il existe
+            loadConfig();
+            
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement pour sauvegarder la configuration
+            document.getElementById('save-config').addEventListener('click', saveConfig);
+            
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement pour tester la connexion
+            document.getElementById('test-connection').addEventListener('click', testConnection);
+            
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement pour envoyer un ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement de test
+            document.getElementById('send-test-event').addEventListener('click', sendTestEvent);
+            
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement pour afficher/masquer les champs selon le provider sÃƒÆ’Ã‚Â©lectionnÃƒÆ’Ã‚Â©
+            document.getElementById('api-provider').addEventListener('change', updateProviderFields);
+            
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement pour connecter au live TikTok
+            document.getElementById('connect-to-live').addEventListener('click', connectToTikTokLive);
+            
+            // Initialiser l'affichage des champs selon le provider
+            updateProviderFields();
+            
+            // Initialiser Socket.IO si TikTok Live Connector est le provider par dÃƒÆ’Ã‚Â©faut
+            if (document.getElementById('api-provider').value === 'tiktok-live') {
+                initSocketConnection();
+            }
+        });
+        
+        // Mettre ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  jour l'interface selon le fournisseur d'API sÃƒÆ’Ã‚Â©lectionnÃƒÆ’Ã‚Â©
+        function updateProviderFields() {
+            const provider = document.getElementById('api-provider').value;
+            const apiCard = document.getElementById('card-connection-api');
+            const liveCard = document.getElementById('card-connection-live');
+            
+            if (provider === 'tiktok-live') {
+                apiCard.style.display = 'none';
+                liveCard.style.display = 'block';
+                
+                // Initialiser Socket.IO si nÃƒÆ’Ã‚Â©cessaire
+                if (!socket) {
+                    initSocketConnection();
+                }
+            } else {
+                apiCard.style.display = 'block';
+                liveCard.style.display = 'none';
+                
+                // DÃƒÆ’Ã‚Â©connecter Socket.IO si connectÃƒÆ’Ã‚Â©
+                if (socket && isConnected) {
+                    disconnectFromTikTokLive();
+                }
+            }
+        }
+        
+        // Initialiser la connexion Socket.IO
+        function initSocketConnection() {
+            try {
+                // CrÃƒÆ’Ã‚Â©er une nouvelle connexion ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  notre serveur Socket.IO local
+                const serverUrl = 'http://localhost:8092';
+                socket = io(serverUrl);
+                
+                // Configurer les ÃƒÆ’Ã‚Â©couteurs d'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nements Socket.IO
+                setupSocketEvents();
+                
+                logEvent('Connexion au serveur Socket.IO ÃƒÆ’Ã‚Â©tablie');
+            } catch (error) {
+                console.error('Erreur lors de l\'initialisation de Socket.IO:', error);
+                logEvent('Erreur lors de l\'initialisation de Socket.IO: ' + error.message);
+            }
+        }
+        
+        // Configurer les ÃƒÆ’Ã‚Â©couteurs d'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nements Socket.IO
+        function setupSocketEvents() {
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement de connexion rÃƒÆ’Ã‚Â©ussie au serveur Socket.IO
+            socket.on('connect', () => {
+                logEvent('ConnectÃƒÆ’Ã‚Â© au serveur Socket.IO');
+                document.getElementById('connection-status').textContent = 'ConnectÃƒÆ’Ã‚Â© au serveur';
+                document.getElementById('connection-status').style.color = '#33ff33';
+            });
+            
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement de dÃƒÆ’Ã‚Â©connexion du serveur Socket.IO
+            socket.on('disconnect', () => {
+                logEvent('DÃƒÆ’Ã‚Â©connectÃƒÆ’Ã‚Â© du serveur Socket.IO');
+                document.getElementById('connection-status').textContent = 'DÃƒÆ’Ã‚Â©connectÃƒÆ’Ã‚Â© du serveur';
+                document.getElementById('connection-status').style.color = '#ff3333';
+                isConnected = false;
+            });
+            
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement de connexion rÃƒÆ’Ã‚Â©ussie au livestream TikTok
+            socket.on('connectedToLive', (data) => {
+                isConnected = true;
+                tiktokUsername = data.uniqueId;
+                
+                document.getElementById('connection-status').textContent = `ConnectÃƒÆ’Ã‚Â© au live de ${data.uniqueId}`;
+                document.getElementById('connection-status').style.color = '#33ff33';
+                
+                logEvent(`ConnectÃƒÆ’Ã‚Â© au live TikTok de ${data.uniqueId}` + (data.isReused ? ' (connexion partagÃƒÆ’Ã‚Â©e)' : ''));
+                
+                // Stocker le nom d'utilisateur dans le localStorage
+                const config = JSON.parse(localStorage.getItem('tiktokApiConfig') || '{}');
+                config.username = tiktokUsername;
+                localStorage.setItem('tiktokApiConfig', JSON.stringify(config));
+                
+                showStatus('Connexion au live TikTok rÃƒÆ’Ã‚Â©ussie!', 'success');
+            });
+            
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement d'erreur
+            socket.on('error', (err) => {
+                document.getElementById('connection-status').textContent = `Erreur: ${err.message}`;
+                document.getElementById('connection-status').style.color = '#ff3333';
+                logEvent(`Erreur: ${err.message}`);
+                showStatus(`Erreur: ${err.message}`, 'error');
+            });
+            
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement de fin de stream
+            socket.on('streamEnd', () => {
+                document.getElementById('connection-status').textContent = 'Stream terminÃƒÆ’Ã‚Â©';
+                document.getElementById('connection-status').style.color = '#ff9900';
+                logEvent('Le stream TikTok est terminÃƒÆ’Ã‚Â©');
+                isConnected = false;
+            });
+            
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement pour les statistiques de la salle
+            socket.on('roomStats', (stats) => {
+                logEvent(`Stats: ${stats.viewerCount} spectateurs, ${stats.likeCount} likes, ${stats.diamondCount} diamants`);
+            });
+            
+            // ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement pour tous les ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nements TikTok
+            socket.on('tiktokEvent', (event) => {
+                // Formater le message selon le type d'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement
+                let message = '';
+                
+                switch (event.type) {
+                    case 'comment':
+                        message = `Commentaire de ${event.username}: "${event.comment}"`;
+                        break;
+                    case 'donation':
+                        message = `Don de ${event.username}: ${event.amount} diamants (${event.giftName})`;
+                        break;
+                    case 'subscription':
+                        message = `${event.username} s'est abonnÃƒÆ’Ã‚Â©!`;
+                        break;
+                    case 'follow':
+                        message = `${event.username} suit maintenant le compte`;
+                        break;
+                    case 'share':
+                        message = `${event.username} a partagÃƒÆ’Ã‚Â© le stream`;
+                        break;
+                    case 'like':
+                        message = `${event.username} a aimÃƒÆ’Ã‚Â© (${event.likeCount} likes)`;
+                        break;
+                    default:
+                        message = `ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement ${event.type} de ${event.username}`;
+                }
+                
+                logEvent(message);
+                
+                // Si configurÃƒÆ’Ã‚Â© pour ÃƒÆ’Ã‚Âªtre envoyÃƒÆ’Ã‚Â© ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l'application principale, faire cela ici
+                sendEventToMainApp(event);
+            });
+        }
+        
+        // Connecter au live TikTok
+        function connectToTikTokLive() {
+            if (!socket) {
+                showStatus('Socket.IO non initialisÃƒÆ’Ã‚Â©. RafraÃƒÆ’Ã‚Â®chissez la page.', 'error');
+                return;
+            }
+            
+            // RÃƒÆ’Ã‚Â©cupÃƒÆ’Ã‚Â©rer le nom d'utilisateur
+            const username = document.getElementById('tiktok-username').value;
+            
+            if (!username) {
+                showStatus('Veuillez entrer un nom d\'utilisateur TikTok', 'error');
+                return;
+            }
+            
+            // Mettre ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  jour l'ÃƒÆ’Ã‚Â©tat de connexion
+            document.getElementById('connection-status').textContent = 'Connexion en cours...';
+            document.getElementById('connection-status').style.color = '#ffcc00';
+            
+            // Envoyer la demande de connexion au serveur
+            socket.emit('connectToLive', username);
+            
+            // Mettre ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  jour le journal
+            logEvent(`Tentative de connexion au live de ${username}...`);
+        }
+        
+        // DÃƒÆ’Ã‚Â©connecter du live TikTok
+        function disconnectFromTikTokLive() {
+            if (socket) {
+                socket.disconnect();
+                document.getElementById('connection-status').textContent = 'DÃƒÆ’Ã‚Â©connectÃƒÆ’Ã‚Â©';
+                document.getElementById('connection-status').style.color = '#ff9900';
+                logEvent('DÃƒÆ’Ã‚Â©connectÃƒÆ’Ã‚Â© du live TikTok');
+                isConnected = false;
+            }
+        }
+        
+        // Envoyer un ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l'application principale
+        function sendEventToMainApp(event) {
+            if (window.opener && !window.opener.closed) {
+                try {
+                    // Convertir les dons TikTok en euros si nÃƒÆ’Ã‚Â©cessaire
+                    if (event.type === 'donation') {
+                        const conversionRate = parseFloat(document.getElementById('donation-conversion').value) || 0.01;
+                        event.convertedAmount = event.amount * conversionRate;
+                    }
+                    
+                    // Envoyer l'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l'application principale
+                    window.opener.processTikTokEvent(event);
+                } catch (e) {
+                    console.warn('Impossible d\'envoyer l\'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l\'application principale:', e);
+                }
+            }
+        }
+        
+        // Charger la configuration depuis localStorage
+        function loadConfig() {
+            const savedConfig = localStorage.getItem('tiktokApiConfig');
+            
+            if (savedConfig) {
+                try {
+                    const config = JSON.parse(savedConfig);
+                    
+                    // Remplir les champs avec les valeurs sauvegardÃƒÆ’Ã‚Â©es
+                    document.getElementById('api-provider').value = config.provider || 'tiktok-live';
+                    document.getElementById('api-key').value = config.apiKey || '';
+                    document.getElementById('api-secret').value = config.apiSecret || '';
+                    document.getElementById('webhook-url').value = config.webhookUrl || '';
+                    document.getElementById('tiktok-username').value = config.username || '';
+                    
+                    // ParamÃƒÆ’Ã‚Â¨tres d'interaction
+                    document.getElementById('enable-donations').checked = config.enableDonations !== false;
+                    document.getElementById('donation-conversion').value = config.donationConversion || 0.01;
+                    document.getElementById('donation-minimum').value = config.donationMinimum || 5;
+                    
+                    document.getElementById('enable-subscriptions').checked = config.enableSubscriptions !== false;
+                    document.getElementById('subscription-value').value = config.subscriptionValue || 4.99;
+                    document.getElementById('subscription-gift-multiplier').value = config.subscriptionGiftMultiplier || 0.8;
+                    
+                    document.getElementById('enable-comments').checked = config.enableComments !== false;
+                    document.getElementById('keyword-triggers').value = config.keywordTriggers || '';
+                    document.getElementById('comment-cooldown').value = config.commentCooldown || 30;
+                    
+                    // Afficher un message
+                    showStatus('Configuration chargÃƒÆ’Ã‚Â©e avec succÃƒÆ’Ã‚Â¨s.', 'success');
+                } catch (error) {
+                    console.error('Erreur lors du chargement de la configuration:', error);
+                    showStatus('Erreur lors du chargement de la configuration.', 'error');
+                }
+            }
+        }
+        
+        // Sauvegarder la configuration dans localStorage
+        function saveConfig() {
+            const config = {
+                provider: document.getElementById('api-provider').value,
+                apiKey: document.getElementById('api-key').value,
+                apiSecret: document.getElementById('api-secret').value,
+                webhookUrl: document.getElementById('webhook-url').value,
+                username: document.getElementById('tiktok-username').value,
+                
+                enableDonations: document.getElementById('enable-donations').checked,
+                donationConversion: parseFloat(document.getElementById('donation-conversion').value),
+                donationMinimum: parseInt(document.getElementById('donation-minimum').value),
+                
+                enableSubscriptions: document.getElementById('enable-subscriptions').checked,
+                subscriptionValue: parseFloat(document.getElementById('subscription-value').value),
+                subscriptionGiftMultiplier: parseFloat(document.getElementById('subscription-gift-multiplier').value),
+                
+                enableComments: document.getElementById('enable-comments').checked,
+                keywordTriggers: document.getElementById('keyword-triggers').value,
+                commentCooldown: parseInt(document.getElementById('comment-cooldown').value)
+            };
+            
+            try {
+                localStorage.setItem('tiktokApiConfig', JSON.stringify(config));
+                showStatus('Configuration enregistrÃƒÆ’Ã‚Â©e avec succÃƒÆ’Ã‚Â¨s!', 'success');
+                
+                // Mettre ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  jour l'ÃƒÆ’Ã‚Â©tat dans l'application principale si elle est ouverte
+                if (window.opener && !window.opener.closed) {
+                    try {
+                        window.opener.updateTikTokConfig(config);
+                    } catch (e) {
+                        console.warn('Impossible de mettre ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  jour la configuration dans la fenÃƒÆ’Ã‚Âªtre parente:', e);
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'enregistrement de la configuration:', error);
+                showStatus('Erreur lors de l\'enregistrement de la configuration.', 'error');
+            }
+        }
+        
+        // Tester la connexion ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l'API
+        function testConnection() {
+            const connectionStatus = document.getElementById('connection-status');
+            connectionStatus.style.color = '#ffcc00';
+            connectionStatus.textContent = 'Test de connexion en cours...';
+            
+            // Simuler le dÃƒÆ’Ã‚Â©lai d'une requÃƒÆ’Ã‚Âªte rÃƒÆ’Ã‚Â©seau
+            setTimeout(() => {
+                const provider = document.getElementById('api-provider').value;
+                const apiKey = document.getElementById('api-key').value;
+                
+                if (!apiKey) {
+                    connectionStatus.style.color = '#ff3333';
+                    connectionStatus.textContent = 'ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°chec: ClÃƒÆ’Ã‚Â© API manquante';
+                    return;
+                }
+                
+                // Simuler une connexion rÃƒÆ’Ã‚Â©ussie (dans une application rÃƒÆ’Ã‚Â©elle, vous feriez ici une requÃƒÆ’Ã‚Âªte ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l'API)
+                logEvent('Tentative de connexion ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l\'API ' + provider);
+                
+                // Simuler un succÃƒÆ’Ã‚Â¨s ou un ÃƒÆ’Ã‚Â©chec alÃƒÆ’Ã‚Â©atoirement pour la dÃƒÆ’Ã‚Â©mo
+                if (Math.random() > 0.3) { // 70% de chance de succÃƒÆ’Ã‚Â¨s
+                    connectionStatus.style.color = '#33ff33';
+                    connectionStatus.textContent = 'ConnectÃƒÆ’Ã‚Â©: PrÃƒÆ’Ã‚Âªt ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  recevoir les ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nements';
+                    logEvent('Connexion ÃƒÆ’Ã‚Â©tablie avec succÃƒÆ’Ã‚Â¨s');
+                } else {
+                    connectionStatus.style.color = '#ff3333';
+                    connectionStatus.textContent = 'ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°chec: Erreur d\'authentification';
+                    logEvent('ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°chec de la connexion: erreur d\'authentification');
+                }
+            }, 1500);
+        }
+        
+        // Envoyer un ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement de test ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l'application principale
+        function sendTestEvent() {
+            const eventType = document.getElementById('test-event-type').value;
+            const username = document.getElementById('test-username').value || 'TestUser';
+            const amount = parseInt(document.getElementById('test-amount').value || 100);
+            const comment = document.getElementById('test-comment').value || '';
+            
+            // CrÃƒÆ’Ã‚Â©er l'objet d'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement
+            const event = {
+                type: eventType,
+                username: username,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Ajouter des propriÃƒÆ’Ã‚Â©tÃƒÆ’Ã‚Â©s spÃƒÆ’Ã‚Â©cifiques selon le type d'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement
+            switch (eventType) {
+                case 'donation':
+                    event.amount = amount;
+                    event.giftName = "Test Gift";
+                    event.giftId = 1;
+                    event.convertedAmount = amount * parseFloat(document.getElementById('donation-conversion').value);
+                    break;
+                case 'subscription':
+                    event.value = parseFloat(document.getElementById('subscription-value').value);
+                    break;
+                case 'comment':
+                    event.comment = comment;
+                    break;
+            }
+            
+            // Journaliser l'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement
+            logEvent(`ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement de test envoyÃƒÆ’Ã‚Â©: ${eventType} de ${username}` + 
+                     (eventType === 'donation' ? ` (${amount} piÃƒÆ’Ã‚Â¨ces)` : '') +
+                     (eventType === 'comment' ? ` - "${comment}"` : ''));
+            
+            // Tenter d'envoyer l'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l'application principale si elle est ouverte
+            if (window.opener && !window.opener.closed) {
+                try {
+                    window.opener.processTikTokEvent(event);
+                    showStatus('ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement de test envoyÃƒÆ’Ã‚Â© ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l\'application principale', 'success');
+                } catch (e) {
+                    console.error('Erreur lors de l\'envoi de l\'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement:', e);
+                    showStatus('Erreur: L\'application principale n\'a pas pu traiter l\'ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nement', 'error');
+                }
+            } else {
+                showStatus('Erreur: L\'application principale n\'est pas accessible', 'error');
+            }
+        }
+        
+        // Ajouter un message au journal des ÃƒÆ’Ã‚Â©vÃƒÆ’Ã‚Â©nements
+        function logEvent(message) {
+            const eventLog = document.getElementById('event-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            
+            logEntry.innerHTML = `<span style="color: #999;">[${timestamp}]</span> ${message}`;
+            eventLog.appendChild(logEntry);
+            
+            // Auto-scroll vers le bas
+            eventLog.scrollTop = eventLog.scrollHeight;
+        }
+        
+        // Afficher un message de statut
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + type;
+            statusDiv.style.display = 'block';
+            
+            // Masquer le message aprÃƒÆ’Ã‚Â¨s 3 secondes
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,40 @@
+{
+  "viewerStats": {
+    "totalViewers": 0,
+    "peakViewers": 0,
+    "uniqueViewers": [],
+    "sessionStart": "2025-04-10T19:41:27.290Z",
+    "sessionDuration": 1986220
+  },
+  "engagementStats": {
+    "totalComments": 0,
+    "totalLikes": 0,
+    "totalShares": 0,
+    "totalDonations": 0,
+    "totalDonationAmount": 0,
+    "topDonors": [],
+    "activeMilestones": []
+  },
+  "narrativeData": {
+    "currentChapter": 1,
+    "totalChapters": 7,
+    "unlockedEvents": [],
+    "pendingEvents": [],
+    "specialEncounters": [],
+    "chapterProgress": 0,
+    "worldState": {
+      "explorationPoints": 0,
+      "discoveredEntities": [],
+      "activeChallenges": [],
+      "completedChallenges": []
+    }
+  },
+  "communityTasks": {
+    "activeTasks": [],
+    "completedTasks": [],
+    "communityProgress": 0,
+    "currentVote": null,
+    "voteHistory": []
+  },
+  "sessionHistory": []
+}

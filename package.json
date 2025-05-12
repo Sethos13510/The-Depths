@@ -1,0 +1,19 @@
+{
+  "name": "sethos-unified-server",
+  "version": "1.0.0",
+  "description": "Serveur Unifié pour Sethos AI",
+  "main": "js-unified/unified_server.js",
+  "scripts": {
+    "start": "node js-unified/unified_server.js",
+    "tiktok": "node js-unified/unified_server.js --tiktok-only",
+    "dev": "nodemon js-unified/unified_server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

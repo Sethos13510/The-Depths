@@ -1,0 +1,36 @@
+{
+  "thresholds": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "threshold": 20,
+        "activated": true
+      },
+      {
+        "name": "Tier 2",
+        "threshold": 50,
+        "activated": true
+      },
+      {
+        "name": "Tier 3",
+        "threshold": 100,
+        "activated": true
+      }
+    ],
+    "currentTier": 2,
+    "requiredAmount": 20
+  },
+  "auth": {
+    "progress": 160,
+    "authenticated": false
+  },
+  "donations": {
+    "total": 160,
+    "lastDonation": null
+  },
+  "story": {
+    "currentChapter": 0,
+    "lastEvent": null,
+    "progress": 0
+  }
+}

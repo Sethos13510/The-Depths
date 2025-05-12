@@ -1,0 +1,2 @@
+﻿This is a placeholder for a video file: Story cutscene video placeholder
+In a real implementation, this would be an actual MP4 or WebM file.

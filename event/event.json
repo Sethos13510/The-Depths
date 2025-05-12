@@ -1,0 +1,1512 @@
+{
+  "savedEvents": [
+    {
+      "name": "System_Login",
+      "type": "chapter",
+      "params": "{\"message\":\"LOGIN SUCCESSFUL - NODE 7\",\"importance\":\"critical\"}",
+      "duration": 0
+    },
+    {
+      "name": "Access_Granted",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745326616190,
+          "type": "light",
+          "duration": 3,
+          "parameters": {
+            "color": "green",
+            "pattern": "solid"
+          }
+        },
+        {
+          "id": 1745326620142,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.5,
+            "soundName": "login_beep",
+            "loop": false,
+            "loopCount": 1,
+            "control": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "name": "System_Welcome",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745326745939,
+          "type": "message",
+          "duration": 8,
+          "parameters": {
+            "text": "WELCOME BACK USER #7734 - SECURITY CLEARANCE: DELTA",
+            "color": "#FFFFFF"
+          }
+        },
+        {
+          "id": 1745326749609,
+          "type": "boat",
+          "duration": 0,
+          "parameters": {
+            "action": "move",
+            "speed": "slow"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Path_Selection",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745326778622,
+          "type": "door",
+          "duration": 0,
+          "parameters": {
+            "doorId": "1",
+            "action": "open"
+          }
+        },
+        {
+          "id": 1745326808538,
+          "type": "message",
+          "duration": 5,
+          "parameters": {
+            "text": "DIRECTORY ACCESS: /RED/STORAGE/ARCHIVES",
+            "color": "#FF0000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Load_Session",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745326900538,
+          "type": "message",
+          "duration": 6,
+          "parameters": {
+            "text": "LOADING SESSION DATA... 37% COMPLETE",
+            "color": "#FFFFFF"
+          }
+        },
+        {
+          "id": 1745326910142,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.4,
+            "soundName": "data_transfer",
+            "loop": true,
+            "loopCount": 3,
+            "control": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "name": "File_Access",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745327000538,
+          "type": "image",
+          "duration": 10,
+          "parameters": {
+            "file": "encrypted_file.jpg",
+            "position": "center"
+          }
+        },
+        {
+          "id": 1745327010142,
+          "type": "message",
+          "duration": 7,
+          "parameters": {
+            "text": "DECRYPT KEY REQUIRED - LEVEL 3 AUTHENTICATION",
+            "color": "#FFFF00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authorization_Check",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745327100538,
+          "type": "boat",
+          "duration": 0,
+          "parameters": {
+            "action": "stop"
+          }
+        },
+        {
+          "id": 1745327110142,
+          "type": "message",
+          "duration": 5,
+          "parameters": {
+            "text": "VERIFYING CREDENTIALS... STANDBY",
+            "color": "#FFFFFF"
+          }
+        },
+        {
+          "id": 1745327120142,
+          "type": "light",
+          "duration": 3,
+          "parameters": {
+            "color": "yellow",
+            "pattern": "pulse"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Access_Denied",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745327200538,
+          "type": "message",
+          "duration": 5,
+          "parameters": {
+            "text": "ACCESS DENIED - ELEVATED PRIVILEGES REQUIRED",
+            "color": "#FF0000"
+          }
+        },
+        {
+          "id": 1745327210142,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.5,
+            "soundName": "error_tone",
+            "loop": false,
+            "loopCount": 1,
+            "control": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unknown_Connection",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745327300538,
+          "type": "message",
+          "duration": 7,
+          "parameters": {
+            "text": "WARNING: UNIDENTIFIED CONNECTION DETECTED - TRACE INITIATED",
+            "color": "#FF0000"
+          }
+        },
+        {
+          "id": 1745327310142,
+          "type": "light",
+          "duration": 5,
+          "parameters": {
+            "color": "red",
+            "pattern": "blink"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Connection_Interrupt",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745327400538,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.7,
+            "soundName": "static_burst",
+            "loop": true,
+            "loopCount": 2,
+            "control": "normal"
+          }
+        },
+        {
+          "id": 1745327410142,
+          "type": "light",
+          "duration": 2,
+          "parameters": {
+            "color": "white",
+            "pattern": "strobe"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unknown_Message",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745327500538,
+          "type": "message",
+          "duration": 8,
+          "parameters": {
+            "text": "DON'T RESPOND VOCALLY. THEY'RE MONITORING. I'VE INTERCEPTED YOUR CONNECTION.",
+            "color": "#00FF00"
+          }
+        },
+        {
+          "id": 1745327510142,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.3,
+            "soundName": "soft_beep",
+            "loop": false,
+            "loopCount": 1,
+            "control": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Protocol_Override",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745327600538,
+          "type": "boat",
+          "duration": 0,
+          "parameters": {
+            "action": "move",
+            "speed": "normal"
+          }
+        },
+        {
+          "id": 1745327610142,
+          "type": "door",
+          "duration": 0,
+          "parameters": {
+            "doorId": "2",
+            "action": "open"
+          }
+        },
+        {
+          "id": 1745327620142,
+          "type": "message",
+          "duration": 5,
+          "parameters": {
+            "text": "SECURITY PROTOCOL OVERRIDE - ACCESS GRANTED TO /BLUE/LOGS",
+            "color": "#00FFFF"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Log_Files_Access",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745327700538,
+          "type": "image",
+          "duration": 12,
+          "parameters": {
+            "file": "log_files.jpg",
+            "position": "fullscreen"
+          }
+        },
+        {
+          "id": 1745327710142,
+          "type": "message",
+          "duration": 7,
+          "parameters": {
+            "text": "SYSTEM LOGS REVEAL 17 NEW SUBJECTS PROCESSED LAST WEEK.",
+            "color": "#00FF00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hidden_Message",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745327800538,
+          "type": "message",
+          "duration": 10,
+          "parameters": {
+            "text": "I'M ROUTING YOU TO RESTRICTED FILES. SEND MORE TOKENS TO STRENGTHEN CONNECTION.",
+            "color": "#00FF00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Restricted_Area",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745327900538,
+          "type": "boat",
+          "duration": 0,
+          "parameters": {
+            "action": "move",
+            "speed": "slow"
+          }
+        },
+        {
+          "id": 1745327910142,
+          "type": "message",
+          "duration": 6,
+          "parameters": {
+            "text": "ENTERING RESTRICTED DIRECTORY: /RED/SUBJECTS/PROCESSING",
+            "color": "#FF0000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subject_Records",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745328000538,
+          "type": "image",
+          "duration": 15,
+          "parameters": {
+            "file": "subject_records.jpg",
+            "position": "center"
+          }
+        },
+        {
+          "id": 1745328010142,
+          "type": "message",
+          "duration": 8,
+          "parameters": {
+            "text": "DATABASE CONTAINS 342 SUBJECT PROFILES - 84% FROM EASTERN EUROPE",
+            "color": "#FFFFFF"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bidding_Records",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745328100538,
+          "type": "image",
+          "duration": 10,
+          "parameters": {
+            "file": "bid_history.jpg",
+            "position": "center"
+          }
+        },
+        {
+          "id": 1745328110142,
+          "type": "message",
+          "duration": 7,
+          "parameters": {
+            "text": "ANONYMOUS BIDDERS PAID $30K-250K PER SESSION - NEXT AUCTION: 6 HOURS",
+            "color": "#FFFF00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detected_Intrusion",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745328200538,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.5,
+            "soundName": "alarm_soft",
+            "loop": true,
+            "loopCount": 3,
+            "control": "normal"
+          }
+        },
+        {
+          "id": 1745328210142,
+          "type": "message",
+          "duration": 5,
+          "parameters": {
+            "text": "WARNING: SECURITY SCAN INITIATED - UNAUTHORIZED ACCESS DETECTED",
+            "color": "#FF0000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Emergency_Redirect",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745328300538,
+          "type": "boat",
+          "duration": 0,
+          "parameters": {
+            "action": "turn",
+            "direction": "left"
+          }
+        },
+        {
+          "id": 1745328310142,
+          "type": "message",
+          "duration": 4,
+          "parameters": {
+            "text": "EMERGENCY PROTOCOL ACTIVE - REROUTING CONNECTION",
+            "color": "#00FF00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Anonymous_Message",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745328400538,
+          "type": "message",
+          "duration": 10,
+          "parameters": {
+            "text": "THEY'RE TRACKING US. I'M USING YOUR TOKEN STREAM TO MASK OUR PRESENCE.",
+            "color": "#00FF00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Security_Footage",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745328500538,
+          "type": "image",
+          "duration": 12,
+          "parameters": {
+            "file": "facility_camera.jpg",
+            "position": "fullscreen"
+          }
+        },
+        {
+          "id": 1745328510142,
+          "type": "message",
+          "duration": 7,
+          "parameters": {
+            "text": "LIVE FEED: EASTERN FACILITY - 17 SUBJECTS CURRENTLY HELD",
+            "color": "#FFFFFF"
+          }
+        }
+      ]
+    },
+    {
+      "name": "System_Alert",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745328600538,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.6,
+            "soundName": "alarm",
+            "loop": true,
+            "loopCount": 4,
+            "control": "normal"
+          }
+        },
+        {
+          "id": 1745328610142,
+          "type": "message",
+          "duration": 5,
+          "parameters": {
+            "text": "ALERT: SECURITY BREACH LEVEL 2 - ADMIN NOTIFIED",
+            "color": "#FF0000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin_Override",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745328700538,
+          "type": "message",
+          "duration": 8,
+          "parameters": {
+            "text": "ADMIN OVERRIDE INITIATED - SOURCE: UNKNOWN",
+            "color": "#FFFF00"
+          }
+        },
+        {
+          "id": 1745328710142,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.5,
+            "soundName": "system_beep",
+            "loop": false,
+            "loopCount": 1,
+            "control": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Controller_Access",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745328800538,
+          "type": "boat",
+          "duration": 0,
+          "parameters": {
+            "action": "move",
+            "speed": "normal"
+          }
+        },
+        {
+          "id": 1745328810142,
+          "type": "door",
+          "duration": 0,
+          "parameters": {
+            "doorId": "3",
+            "action": "open"
+          }
+        },
+        {
+          "id": 1745328820142,
+          "type": "message",
+          "duration": 6,
+          "parameters": {
+            "text": "ACCESSING MAIN CONTROLLER NODE - KERNEL ACCESS GRANTED",
+            "color": "#00FFFF"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Security_Disable",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745328900538,
+          "type": "message",
+          "duration": 5,
+          "parameters": {
+            "text": "DISABLING SECURITY PROTOCOLS... 46% COMPLETE",
+            "color": "#00FF00"
+          }
+        },
+        {
+          "id": 1745328910142,
+          "type": "light",
+          "duration": 10,
+          "parameters": {
+            "color": "green",
+            "pattern": "pulse"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Anonymous_Request",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745329000538,
+          "type": "message",
+          "duration": 12,
+          "parameters": {
+            "text": "NEED MORE RESOURCE ACCESS. TOKEN TRANSFER REQUIRED FOR FULL SYSTEM OVERRIDE.",
+            "color": "#00FF00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Access_Mainframe",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745329100538,
+          "type": "boat",
+          "duration": 0,
+          "parameters": {
+            "action": "move",
+            "speed": "fast"
+          }
+        },
+        {
+          "id": 1745329110142,
+          "type": "door",
+          "duration": 0,
+          "parameters": {
+            "doorId": "4",
+            "action": "open"
+          }
+        },
+        {
+          "id": 1745329120142,
+          "type": "message",
+          "duration": 6,
+          "parameters": {
+            "text": "MAINFRAME ACCESS GRANTED - CORE SYSTEMS EXPOSED",
+            "color": "#00FFFF"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Location_Data",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745329200538,
+          "type": "image",
+          "duration": 10,
+          "parameters": {
+            "file": "coordinates.jpg",
+            "position": "center"
+          }
+        },
+        {
+          "id": 1745329210142,
+          "type": "message",
+          "duration": 8,
+          "parameters": {
+            "text": "FACILITY LOCATIONS IDENTIFIED: 5 ACTIVE SITES ACROSS 3 CONTINENTS",
+            "color": "#FFFFFF"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin_Notice",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745329300538,
+          "type": "message",
+          "duration": 5,
+          "parameters": {
+            "text": "SYSTEM NOTICE: ADMINISTRATOR CONNECTION DETECTED",
+            "color": "#FF0000"
+          }
+        },
+        {
+          "id": 1745329310142,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.5,
+            "soundName": "notification",
+            "loop": false,
+            "loopCount": 1,
+            "control": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Evidence_Collection",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745329400538,
+          "type": "message",
+          "duration": 8,
+          "parameters": {
+            "text": "DOWNLOADING SYSTEM EVIDENCE - 34% COMPLETE - ESTIMATED TIME: 5 MINUTES",
+            "color": "#00FF00"
+          }
+        },
+        {
+          "id": 1745329410142,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.4,
+            "soundName": "data_transfer",
+            "loop": true,
+            "loopCount": 5,
+            "control": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Security_Response",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745329500538,
+          "type": "message",
+          "duration": 6,
+          "parameters": {
+            "text": "ALERT: SECURITY COUNTERMEASURES INITIATED",
+            "color": "#FF0000"
+          }
+        },
+        {
+          "id": 1745329510142,
+          "type": "light",
+          "duration": 3,
+          "parameters": {
+            "color": "red",
+            "pattern": "strobe"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Counter_Breach",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745329600538,
+          "type": "message",
+          "duration": 8,
+          "parameters": {
+            "text": "DEPLOYING COUNTER-INTRUSION MEASURES - DIVERTING SYSTEM RESOURCES",
+            "color": "#00FF00"
+          }
+        },
+        {
+          "id": 1745329610142,
+          "type": "boat",
+          "duration": 0,
+          "parameters": {
+            "action": "turn",
+            "direction": "right"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Evidence_Transfer",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745329700538,
+          "type": "message",
+          "duration": 7,
+          "parameters": {
+            "text": "DATA UPLOADED TO SECURE SERVER - ENCRYPTED CONNECTION ESTABLISHED",
+            "color": "#00FF00"
+          }
+        },
+        {
+          "id": 1745329710142,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.5,
+            "soundName": "upload_complete",
+            "loop": false,
+            "loopCount": 1,
+            "control": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authority_Contact",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745329800538,
+          "type": "message",
+          "duration": 10,
+          "parameters": {
+            "text": "ANONYMOUS TIP SUBMITTED TO INTERNATIONAL AUTHORITIES - DELIVERY CONFIRMED",
+            "color": "#00FF00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trace_Detection",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745329900538,
+          "type": "message",
+          "duration": 5,
+          "parameters": {
+            "text": "WARNING: CONNECTION BEING TRACED - SOURCE TRIANGULATION IN PROGRESS",
+            "color": "#FF0000"
+          }
+        },
+        {
+          "id": 1745329910142,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.6,
+            "soundName": "warning_beep",
+            "loop": true,
+            "loopCount": 3,
+            "control": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "name": "System_Manipulation",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745330000538,
+          "type": "message",
+          "duration": 8,
+          "parameters": {
+            "text": "INITIATING CORE SYSTEM MANIPULATION - ACCESS POINT VULNERABILITY EXPLOITED",
+            "color": "#00FF00"
+          }
+        },
+        {
+          "id": 1745330010142,
+          "type": "light",
+          "duration": 5,
+          "parameters": {
+            "color": "green",
+            "pattern": "blink"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Door_Controls",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745330100538,
+          "type": "message",
+          "duration": 6,
+          "parameters": {
+            "text": "ACCESSING FACILITY CONTROLS - REMOTE DOOR RELEASE INITIATED",
+            "color": "#00FF00"
+          }
+        },
+        {
+          "id": 1745330110142,
+          "type": "door",
+          "duration": 0,
+          "parameters": {
+            "doorId": "5",
+            "action": "open"
+          }
+        },
+        {
+          "id": 1745330120142,
+          "type": "door",
+          "duration": 1,
+          "parameters": {
+            "doorId": "6",
+            "action": "open"
+          }
+        },
+        {
+          "id": 1745330130142,
+          "type": "door",
+          "duration": 2,
+          "parameters": {
+            "doorId": "7",
+            "action": "open"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Escape_Confirmation",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745330200538,
+          "type": "message",
+          "duration": 8,
+          "parameters": {
+            "text": "SECURITY CAMERA FEED: SUBJECTS MOVING TOWARD EXIT POINTS",
+            "color": "#00FF00"
+          }
+        },
+        {
+          "id": 1745330210142,
+          "type": "image",
+          "duration": 10,
+          "parameters": {
+            "file": "camera_feed.jpg",
+            "position": "center"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin_Alert",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745330300538,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.8,
+            "soundName": "alarm_loud",
+            "loop": true,
+            "loopCount": 6,
+            "control": "normal"
+          }
+        },
+        {
+          "id": 1745330310142,
+          "type": "message",
+          "duration": 5,
+          "parameters": {
+            "text": "CRITICAL SYSTEM FAILURE - ADMIN OVERRIDE REJECTED",
+            "color": "#FF0000"
+          }
+        },
+        {
+          "id": 1745330320142,
+          "type": "light",
+          "duration": 0,
+          "parameters": {
+            "color": "red",
+            "pattern": "strobe"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Core_Access",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745330400538,
+          "type": "boat",
+          "duration": 0,
+          "parameters": {
+            "action": "move",
+            "speed": "very_fast"
+          }
+        },
+        {
+          "id": 1745330410142,
+          "type": "door",
+          "duration": 0,
+          "parameters": {
+            "doorId": "8",
+            "action": "open"
+          }
+        },
+        {
+          "id": 1745330420142,
+          "type": "message",
+          "duration": 6,
+          "parameters": {
+            "text": "ACCESSING CORE SYSTEM DATABASE - PREPARING FOR WIPE",
+            "color": "#00FF00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "System_Wipe",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745330500538,
+          "type": "message",
+          "duration": 10,
+          "parameters": {
+            "text": "EXECUTING SYSTEM WIPE - DELETING SERVER NODE CONNECTIONS - 37% COMPLETE",
+            "color": "#00FF00"
+          }
+        },
+        {
+          "id": 1745330510142,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.5,
+            "soundName": "system_process",
+            "loop": true,
+            "loopCount": 4,
+            "control": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authorities_Closing",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745330600538,
+          "type": "message",
+          "duration": 8,
+          "parameters": {
+            "text": "EXTERNAL COMMUNICATION INTERCEPTED: AUTHORITIES CONVERGING ON PRIMARY LOCATIONS",
+            "color": "#00FF00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "System_Collapse",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745330700538,
+          "type": "light",
+          "duration": 5,
+          "parameters": {
+            "color": "white",
+            "pattern": "flicker"
+          }
+        },
+        {
+          "id": 1745330710142,
+          "type": "sound",
+          "duration": 0,
+          "parameters": {
+            "file": "",
+            "volume": 0.7,
+            "soundName": "system_failure",
+            "loop": true,
+            "loopCount": 2,
+            "control": "normal"
+          }
+        },
+        {
+          "id": 1745330720142,
+          "type": "message",
+          "duration": 10,
+          "parameters": {
+            "text": "SYSTEM COLLAPSE IMMINENT - NODE CONNECTIONS FAILING - 83% COMPLETE",
+            "color": "#FFFF00"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Final_Message",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745330800538,
+          "type": "message",
+          "duration": 15,
+          "parameters": {
+            "text": "CONNECTION TERMINATING - DATA SECURED - SUBJECTS STATUS: EVACUATING - THANK YOU",
+            "color": "#00FF00"
+          }
+        },
+        {
+          "id": 1745330810142,
+          "type": "light",
+          "duration": 0,
+          "parameters": {
+            "color": "white",
+            "pattern": "fade"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Connection_Lost",
+      "type": "sequence",
+      "isSequence": true,
+      "sequence": [
+        {
+          "id": 1745330900538,
+          "type": "message",
+          "duration": 8,
+          "parameters": {
+            "text": "SYSTEM OFFLINE - CONNECTION TERMINATED",
+            "color": "#FF0000"
+          }
+        },
+        {
+          "id": 1745330910142,
+          "type": "light",
+          "duration": 3,
+          "parameters": {
+            "color": "black",
+            "pattern": "solid"
+          }
+        }
+      ]
+    }
+  ],
+  "thresholds": [
+    {
+      "amount": 10,
+      "eventIndex": 0,
+      "eventName": "System_Login",
+      "applied": false
+    },
+    {
+      "amount": 20,
+      "eventIndex": 1,
+      "eventName": "Access_Granted",
+      "applied": false
+    },
+    {
+      "amount": 30,
+      "eventIndex": 2,
+      "eventName": "System_Welcome",
+      "applied": false
+    },
+    {
+      "amount": 50,
+      "eventIndex": 3,
+      "eventName": "Path_Selection",
+      "applied": false
+    },
+    {
+      "amount": 75,
+      "eventIndex": 4,
+      "eventName": "Load_Session",
+      "applied": false
+    },
+    {
+      "amount": 100,
+      "eventIndex": 5,
+      "eventName": "File_Access",
+      "applied": false
+    },
+    {
+      "amount": 125,
+      "eventIndex": 6,
+      "eventName": "Authorization_Check",
+      "applied": false
+    },
+    {
+      "amount": 150,
+      "eventIndex": 7,
+      "eventName": "Access_Denied",
+      "applied": false
+    },
+    {
+      "amount": 175,
+      "eventIndex": 8,
+      "eventName": "Unknown_Connection",
+      "applied": false
+    },
+    {
+      "amount": 200,
+      "eventIndex": 9,
+      "eventName": "Connection_Interrupt",
+      "applied": false
+    },
+    {
+      "amount": 225,
+      "eventIndex": 10,
+      "eventName": "Unknown_Message",
+      "applied": false
+    },
+    {
+      "amount": 250,
+      "eventIndex": 11,
+      "eventName": "Protocol_Override",
+      "applied": false
+    },
+    {
+      "amount": 300,
+      "eventIndex": 12,
+      "eventName": "Log_Files_Access",
+      "applied": false
+    },
+    {
+      "amount": 350,
+      "eventIndex": 13,
+      "eventName": "Hidden_Message",
+      "applied": false
+    },
+    {
+      "amount": 400,
+      "eventIndex": 14,
+      "eventName": "Restricted_Area",
+      "applied": false
+    },
+    {
+      "amount": 450,
+      "eventIndex": 15,
+      "eventName": "Subject_Records",
+      "applied": false
+    },
+    {
+      "amount": 500,
+      "eventIndex": 16,
+      "eventName": "Bidding_Records",
+      "applied": false
+    },
+    {
+      "amount": 550,
+      "eventIndex": 17,
+      "eventName": "Detected_Intrusion",
+      "applied": false
+    },
+    {
+      "amount": 600,
+      "eventIndex": 18,
+      "eventName": "Emergency_Redirect",
+      "applied": false
+    },
+    {
+      "amount": 650,
+      "eventIndex": 19,
+      "eventName": "Anonymous_Message",
+      "applied": false
+    },
+    {
+      "amount": 700,
+      "eventIndex": 20,
+      "eventName": "Security_Footage",
+      "applied": false
+    },
+    {
+      "amount": 750,
+      "eventIndex": 21,
+      "eventName": "System_Alert",
+      "applied": false
+    },
+    {
+      "amount": 800,
+      "eventIndex": 22,
+      "eventName": "Admin_Override",
+      "applied": false
+    },
+    {
+      "amount": 850,
+      "eventIndex": 23,
+      "eventName": "Controller_Access",
+      "applied": false
+    },
+    {
+      "amount": 900,
+      "eventIndex": 24,
+      "eventName": "Security_Disable",
+      "applied": false
+    },
+    {
+      "amount": 950,
+      "eventIndex": 25,
+      "eventName": "Anonymous_Request",
+      "applied": false
+    },
+    {
+      "amount": 1000,
+      "eventIndex": 26,
+      "eventName": "Access_Mainframe",
+      "applied": false
+    },
+    {
+      "amount": 1100,
+      "eventIndex": 27,
+      "eventName": "Location_Data",
+      "applied": false
+    },
+    {
+      "amount": 1200,
+      "eventIndex": 28,
+      "eventName": "Admin_Notice",
+      "applied": false
+    },
+    {
+      "amount": 1300,
+      "eventIndex": 29,
+      "eventName": "Evidence_Collection",
+      "applied": false
+    },
+    {
+      "amount": 1400,
+      "eventIndex": 30,
+      "eventName": "Security_Response",
+      "applied": false
+    },
+    {
+      "amount": 1500,
+      "eventIndex": 31,
+      "eventName": "Counter_Breach",
+      "applied": false
+    },
+    {
+      "amount": 1600,
+      "eventIndex": 32,
+      "eventName": "Evidence_Transfer",
+      "applied": false
+    },
+    {
+      "amount": 1700,
+      "eventIndex": 33,
+      "eventName": "Authority_Contact",
+      "applied": false
+    },
+    {
+      "amount": 1800,
+      "eventIndex": 34,
+      "eventName": "Trace_Detection",
+      "applied": false
+    },
+    {
+      "amount": 1900,
+      "eventIndex": 35,
+      "eventName": "System_Manipulation",
+      "applied": false
+    },
+    {
+      "amount": 2000,
+      "eventIndex": 36,
+      "eventName": "Door_Controls",
+      "applied": false
+    },
+    {
+      "amount": 2100,
+      "eventIndex": 37,
+      "eventName": "Escape_Confirmation",
+      "applied": false
+    },
+    {
+      "amount": 2200,
+      "eventIndex": 38,
+      "eventName": "Admin_Alert",
+      "applied": false
+    },
+    {
+      "amount": 2300,
+      "eventIndex": 39,
+      "eventName": "Core_Access",
+      "applied": false
+    },
+    {
+      "amount": 2400,
+      "eventIndex": 40,
+      "eventName": "System_Wipe",
+      "applied": false
+    },
+    {
+      "amount": 2500,
+      "eventIndex": 41,
+      "eventName": "Authorities_Closing",
+      "applied": false
+    },
+    {
+      "amount": 2750,
+      "eventIndex": 42,
+      "eventName": "System_Collapse",
+      "applied": false
+    },
+    {
+      "amount": 3000,
+      "eventIndex": 43,
+      "eventName": "Final_Message",
+      "applied": false
+    },
+    {
+      "amount": 3250,
+      "eventIndex": 44,
+      "eventName": "Connection_Lost",
+      "applied": false
+    }
+  ],
+  "currentChapter": "infiltration",
+  "progress": 0,
+  "chapters": {
+    "infiltration": {
+      "name": "System Access",
+      "description": "Initial access to the network",
+      "startEvent": 0,
+      "endEvent": 9
+    },
+    "discovery": {
+      "name": "Information Discovery",
+      "description": "Uncovering the system's true purpose",
+      "startEvent": 10,
+      "endEvent": 19
+    },
+    "breach": {
+      "name": "Security Breach",
+      "description": "Gaining privileged access",
+      "startEvent": 20,
+      "endEvent": 29
+    },
+    "action": {
+      "name": "System Manipulation",
+      "description": "Taking control of critical systems",
+      "startEvent": 30,
+      "endEvent": 39
+    },
+    "finale": {
+      "name": "Network Destruction",
+      "description": "Destroying the criminal network",
+      "startEvent": 40,
+      "endEvent": 44
+    }
+  }
+}
+    

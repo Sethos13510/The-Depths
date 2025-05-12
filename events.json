@@ -1,0 +1,84 @@
+{
+  "events": [
+    {
+      "id": "event_1",
+      "type": "narrative",
+      "params": "{\"text\":\"Un calme inquiétant s'installe dans les profondeurs...\",\"duration\":5000}"
+    },
+    {
+      "id": "event_2",
+      "type": "entity",
+      "params": "{\"entityType\":\"shadow\",\"position\":{\"x\":0.5,\"y\":0.7},\"speed\":0.02}"
+    },
+    {
+      "id": "event_3",
+      "type": "ambient",
+      "params": "{\"effect\":\"fog\",\"intensity\":0.6,\"duration\":10000}"
+    },
+    {
+      "id": "event_4",
+      "type": "chapter",
+      "params": "{\"chapter\":2,\"title\":\"La Descente Continue\",\"description\":\"Les ténèbres s'épaississent autour de vous.\"}"
+    },
+    {
+      "id": "event_5",
+      "type": "sound",
+      "params": "{\"sound\":\"whisper\",\"volume\":0.8,\"loop\":false}"
+    },
+    {
+      "id": "event_6",
+      "type": "vote",
+      "params": "{\"question\":\"Que faites-vous face à cette présence?\",\"options\":[\"Explorer\",\"Se cacher\",\"Confronter\"],\"duration\":60000}"
+    }
+  ],
+  "thresholds": [
+    {
+      "amount": 100,
+      "type": "narrative",
+      "description": "Premier message mystérieux",
+      "eventId": "event_1",
+      "applied": false
+    },
+    {
+      "amount": 300,
+      "type": "entity",
+      "description": "Apparition d'une ombre",
+      "eventId": "event_2",
+      "applied": false
+    },
+    {
+      "amount": 500,
+      "type": "ambient",
+      "description": "Le brouillard s'épaissit",
+      "eventId": "event_3",
+      "applied": false
+    },
+    {
+      "amount": 800,
+      "type": "chapter",
+      "description": "Chapitre 2: La Descente Continue",
+      "eventId": "event_4",
+      "applied": false
+    },
+    {
+      "amount": 1200,
+      "type": "sound",
+      "description": "Murmures étranges",
+      "eventId": "event_5",
+      "applied": false
+    },
+    {
+      "amount": 1600,
+      "type": "vote",
+      "description": "Choix crucial",
+      "eventId": "event_6",
+      "applied": false
+    },
+    {
+      "amount": 2000,
+      "type": "finale",
+      "description": "Finale - Les Profondeurs vous attendent",
+      "applied": false
+    }
+  ]
+} 

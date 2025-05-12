@@ -1,0 +1,416 @@
+{
+  "system": {
+    "version": "1.0.0",
+    "lastStartup": "2025-05-04T14:08:18.867Z",
+    "uptime": 48.9277644
+  },
+  "donations": {
+    "total": 868580,
+    "history": [
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.784Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.785Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.786Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.786Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.787Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.787Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.788Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.788Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.789Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.789Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.790Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.790Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.791Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.792Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.793Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.794Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.795Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.795Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.809Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.810Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.810Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.810Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.811Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.812Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.812Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.813Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.814Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.814Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.815Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.868Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.871Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.872Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.873Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.873Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.874Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.874Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.875Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.876Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.877Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.878Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.878Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.879Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.880Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.881Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.882Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.883Z"
+      },
+      {
+        "type": "donation",
+        "username": 10,
+        "amount": 20,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.885Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.887Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.888Z"
+      },
+      {
+        "type": "donation",
+        "username": 20,
+        "amount": 10,
+        "message": "",
+        "timestamp": "2025-05-05T09:05:32.888Z"
+      }
+    ],
+    "lastDonation": {
+      "type": "donation",
+      "username": 20,
+      "amount": 10,
+      "message": "",
+      "timestamp": "2025-05-05T09:05:32.888Z"
+    }
+  },
+  "auth": {
+    "progress": 568310,
+    "required": 20,
+    "authenticated": true
+  },
+  "thresholds": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "threshold": 20,
+        "activated": true
+      },
+      {
+        "name": "Tier 2",
+        "threshold": 50,
+        "activated": true
+      },
+      {
+        "name": "Tier 3",
+        "threshold": 100,
+        "activated": true
+      }
+    ],
+    "currentTier": 2,
+    "requiredAmount": 20
+  },
+  "story": {
+    "events": [],
+    "savedEvents": [],
+    "currentChapter": 0,
+    "lastEvent": null,
+    "progress": 0,
+    "thresholds": []
+  },
+  "tiktok": {
+    "connected": false,
+    "lastEvent": {
+      "type": "follow",
+      "username": "Suiveur318",
+      "timestamp": "2025-05-08T05:36:19.591Z"
+    },
+    "eventCount": 98,
+    "likes": 36,
+    "shares": 26,
+    "comments": 0,
+    "viewers": 0
+  }
+}

@@ -1,0 +1,268 @@
+/**
+ * Unified CSS Styles for Sethos AI
+ * Ce fichier combine les styles de différents fichiers CSS :
+ * - responsive.css : Styles responsives pour l'adaptation mobile
+ * - auth_gauge.css : Styles pour les indicateurs d'authentification
+ * - tiktok_preview.css : Styles pour la prévisualisation TikTok
+ * - tiktok_aspect_ratio.css : Styles pour le ratio d'aspect
+ * - custom_tiktok_styles.css : Styles personnalisés pour TikTok
+ * - custom_iframe_styles.css : Styles pour les iframes
+ */
+
+/* ===== STYLES RESPONSIVES ===== */
+@media screen and (max-width: 768px) {
+    .admin-panel {
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto auto 1fr auto !important;
+        grid-template-areas: 
+            "header"
+            "sidebar"
+            "main"
+            "footer" !important;
+    }
+    
+    .sidebar {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    .metro-line {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    
+    .desktop-only {
+        display: none !important;
+    }
+    
+    .mobile-only {
+        display: block !important;
+    }
+    
+    .header-title {
+        font-size: 1.2rem !important;
+    }
+    
+    .log-container {
+        max-height: 150px !important;
+    }
+    
+    .metro-station {
+        min-width: 80px !important;
+        font-size: 0.7rem !important;
+    }
+}
+
+/* Styles pour les appareils mobiles en portrait */
+@media screen and (max-width: 480px) {
+    .admin-panel {
+        padding: 10px;
+        gap: 10px !important;
+    }
+    
+    .section-title {
+        font-size: 0.9rem !important;
+    }
+    
+    .header {
+        padding: 10px !important;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .header-controls {
+        width: 100%;
+        justify-content: space-around;
+    }
+    
+    .metro-details {
+        max-height: 200px !important;
+    }
+    
+    .log-container {
+        max-height: 120px !important;
+    }
+}
+
+/* ===== STYLES DE LA JAUGE D'AUTHENTIFICATION ===== */
+.auth-gauge-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 10px auto;
+}
+
+.auth-gauge-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #f05, #f90);
+    width: 0%;
+    transition: width 0.5s ease-in-out;
+    border-radius: 5px;
+}
+
+.auth-gauge-percentage {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #fff;
+    margin-top: 5px;
+    text-shadow: 0 0 2px #000;
+}
+
+.auth-gauge-label {
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #fff;
+    text-shadow: 0 0 2px #000;
+}
+
+/* ===== STYLES POUR TIKTOK ===== */
+.tiktok-preview {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    background-color: #000;
+    overflow: hidden;
+    margin: 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.tiktok-preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #111;
+    color: #fff;
+    font-size: 14px;
+}
+
+.tiktok-preview-content {
+    position: relative;
+    padding-top: 177.78%; /* 16:9 aspect ratio */
+    background-color: #000;
+}
+
+.tiktok-preview-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.tiktok-preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tiktok-preview-overlay.active {
+    opacity: 1;
+}
+
+/* Aspect ratio et positionnement pour TikTok */
+.tiktok-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    aspect-ratio: 9/16;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.tiktok-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: none;
+}
+
+/* Adaptation mobile pour TikTok */
+@media (max-width: 600px) {
+    .tiktok-container {
+        width: 100%;
+        max-width: 100%;
+        height: 100vh;
+        margin: 0;
+        border-radius: 0;
+    }
+}
+
+/* ===== AUTRES STYLES PERSONNALISÉS ===== */
+.custom-iframe {
+    border: none;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+}
+
+.iframe-container {
+    position: relative;
+    overflow: hidden;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    margin-bottom: 20px;
+}
+
+.iframe-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* Styles spécifiques pour l'application */
+body.app-mode {
+    background-color: transparent !important;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.dark-theme {
+    --text-color: #e0e0e0;
+    --background-color: #121212;
+    --surface-color: #1e1e1e;
+    --primary-color: #bb86fc;
+    --secondary-color: #03dac6;
+    --error-color: #cf6679;
+}
+
+.light-theme {
+    --text-color: #121212;
+    --background-color: #ffffff;
+    --surface-color: #f5f5f5;
+    --primary-color: #6200ee;
+    --secondary-color: #03dac6;
+    --error-color: #b00020;
+} 

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Instructions d'intégration Trame Métro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            max-width: 1000px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Instructions d'intégration de la Trame Métro</h1>
+    
+    <div class="warning">
+        <strong>Important :</strong> Les modifications suivantes doivent être appliquées pour assurer la communication correcte entre les composants pour les événements de la trame métro.
+    </div>
+    
+    <h2>1. Modifications dans sethos_ai.html</h2>
+    <p>Assurez-vous que le fichier story_events.js est inclus après Three.js :</p>
+    <pre>
+    &lt;!-- Charger Three.js --&gt;
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"&gt;&lt;/script&gt;
+    
+    &lt;!-- Charger le gestionnaire d'événements story --&gt;
+    &lt;script src="story_events.js"&gt;&lt;/script&gt;
+    
+    &lt;script&gt;
+        // Le reste du script...
+    </pre>
+    
+    <h2>2. Modifications dans new_admin.html</h2>
+    <p>La fonction sendGameAction a été modifiée pour envoyer les événements au serveur via Socket.IO :</p>
+    <pre>
+    function sendGameAction(type, params) {
+        // Vérifier si Socket.IO est disponible
+        if (typeof socket === 'undefined' || !socket) {
+            console.error('Socket.IO non initialisé. Tentative de connexion...');
+            connectSocket();
+            setTimeout(() => {
+                if (socket && socket.connected) {
+                    sendGameAction(type, params);
+                } else {
+                    addLogEvent('Erreur: Impossible de se connecter au serveur.', 'error');
+                }
+            }, 1000);
+            return false;
+        }
+        
+        // Préparer les données de l'action
+        const actionData = {
+            type: type,
+            ...params,
+            timestamp: Date.now()
+        };
+        
+        console.log('Envoi de l\'action au jeu:', actionData);
+        
+        // Envoyer l'action au serveur
+        socket.emit('game_action', actionData);
+        
+        // Également envoyer une notification au serveur pour mettre à jour les clients sethos_ai.html
+        socket.emit('metro_event', actionData);
+        
+        addLogEvent(`Action envoyée au jeu: ${type}`, 'action');
+        
+        return true;
+    }
+    </pre>
+    
+    <h2>3. Modifications dans server.js</h2>
+    <p>Le serveur a été modifié pour écouter les événements metro_event et les ajouter à la file d'attente des mises à jour :</p>
+    <pre>
+    // Configuration des événements Socket.IO
+    io.on('connection', (socket) => {
+      console.log('Client connecté:', socket.id);
+      systemState.activeUsers++;
+      
+      // ... code existant ...
+      
+      // Écouter les événements de la trame métro (boat et door)
+      socket.on('metro_event', (data) => {
+        console.log('Événement métro reçu:', data);
+        
+        // S'assurer que la file d'attente des mises à jour existe
+        if (!systemState.pendingStoryUpdates) {
+          systemState.pendingStoryUpdates = [];
+        }
+        
+        // Ajouter l'événement à la file d'attente pour sethos_ai.html
+        systemState.pendingStoryUpdates.push({
+          action: 'triggerEvent',
+          eventType: data.type,
+          parameters: data,
+          duration: data.duration || 0
+        });
+        
+        // Informer tous les clients de l'événement
+        io.emit('metro_update', data);
+        
+        console.log('Événement métro ajouté à la file d\'attente pour sethos_ai.html');
+      });
+    });
+    </pre>
+    
+    <h2>4. Modifications dans story_events.js</h2>
+    <p>Le fichier story_events.js a été créé/modifié pour traiter correctement les événements de la trame métro :</p>
+    <pre>
+    function checkServerUpdates() {
+        // ... code existant ...
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.updates && data.updates.length > 0) {
+                    // Traiter les mises à jour
+                    data.updates.forEach(update => {
+                        // ... code existant ...
+                        
+                        switch (update.action) {
+                            // ... cas existants ...
+                            
+                            case 'triggerEvent':
+                                // ... code existant ...
+                                
+                                // Traitement spécial pour les événements de la trame métro
+                                if (update.eventType === 'boat') {
+                                    console.log('🟣 SETHOS - Traitement événement bateau:', update.parameters);
+                                    handleBoatAction(update.parameters);
+                                } else if (update.eventType === 'door') {
+                                    console.log('🟣 SETHOS - Traitement événement porte:', update.parameters);
+                                    handleDoorAction(update.parameters, update.duration);
+                                }
+                                break;
+                                
+                            case 'metro_update':
+                                // Traiter spécifiquement les événements de la trame métro
+                                if (update.type === 'boat') {
+                                    console.log('🟣 SETHOS - Traitement événement bateau:', update);
+                                    handleBoatAction(update);
+                                } else if (update.type === 'door') {
+                                    console.log('🟣 SETHOS - Traitement événement porte:', update);
+                                    handleDoorAction(update, update.duration);
+                                }
+                                break;
+                            
+                            // ... autres cas ...
+                        }
+                    });
+                }
+            });
+    }
+    
+    // Les fonctions handleBoatAction et handleDoorAction ont été améliorées
+    // pour interagir directement avec le bateau et les portes 3D dans sethos_ai.html.
+    </pre>
+    
+    <div class="success">
+        <strong>Résultat :</strong> Avec ces modifications, les événements de la trame métro seront correctement communiqués entre new_admin.html et sethos_ai.html via le serveur. Les animations de porte et les mouvements du bateau fonctionneront correctement.
+    </div>
+    
+    <h2>Comment tester</h2>
+    <ol>
+        <li>Démarrer le serveur (server.js)</li>
+        <li>Ouvrir new_admin.html dans un navigateur</li>
+        <li>Ouvrir sethos_ai.html dans un autre onglet</li>
+        <li>Dans new_admin.html, créer et déclencher des événements de porte ou de bateau</li>
+        <li>Vérifier que les événements sont bien transmis à sethos_ai.html et que les animations se déclenchent</li>
+    </ol>
+</body>
+</html> 

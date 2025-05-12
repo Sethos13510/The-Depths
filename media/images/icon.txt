@@ -1,0 +1,2 @@
+﻿This is a placeholder for an image file: UI icon placeholder
+In a real implementation, this would be an actual JPG, PNG or GIF file.

@@ -1,0 +1,4255 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <!-- Scripts de correctifs unifiés - DOIT être chargé avant les autres scripts -->
+    <script src="js-unified/unified_fixes.js"></script>\r\n    <!-- Module de validation des seuils -->\r\n    <script src="js-unified/threshold_validator.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE-DEPTHS Admin Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+    // Déclaration globale des variables pour éviter les redéclarations
+    window.sequenceActions = [];
+    window.actionIdCounter = 0;
+</script>
+    <script>
+    // Déclaration globale des variables pour éviter les redéclarations
+    window.sequenceActions = [];
+    window.window.actionIdCounter = window.actionIdCounter || 0;
+</script>
+    <script src="js/basic_sounds.js"></script>
+    <!-- Module Socket.IO unifié -->
+    <script src="js-unified/unified_socket.js"></script>
+    <!-- Styles unifiés pour l'interface -->
+    <link rel="stylesheet" href="css-unified/unified_styles.css">
+    <style>
+        :root {
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --accent-color: #0f3460;
+            --highlight-color: #e94560;
+            --text-color: #f7f7f7;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+            --info-color: #2196f3;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        body {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: linear-gradient(45deg, rgba(10, 10, 25, 0.8), rgba(30, 30, 60, 0.8));
+        }
+        
+        .admin-panel {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            grid-template-rows: auto 1fr auto;
+            grid-template-areas: 
+                "header header"
+                "sidebar main"
+                "footer footer";
+            gap: 20px;
+            height: calc(100vh - 40px);
+        }
+        
+        .header {
+            grid-area: header;
+            text-align: center;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-title {
+            font-size: 1.8rem;
+            color: var(--highlight-color);
+            text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-button {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-button:hover {
+            background-color: var(--highlight-color);
+        }
+        
+        .icon {
+            margin-right: 5px;
+        }
+        
+        .sidebar {
+            grid-area: sidebar;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+        
+        .control-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--accent-color);
+            color: var(--highlight-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .status-label {
+            font-size: 0.9rem;
+            margin-right: 10px;
+            min-width: 80px;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status.active {
+            background-color: var(--success-color);
+        }
+        
+        .status.inactive {
+            background-color: var(--warning-color);
+        }
+        
+        .status.error {
+            background-color: var(--error-color);
+        }
+        
+        button {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        button:hover {
+            background-color: var(--highlight-color);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .main-content {
+            grid-area: main;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+        }
+        
+        .metro-container {
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .metro-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--highlight-color);
+            text-align: center;
+        }
+        
+        /* Styles pour la prévisualisation */
+        .preview-container {
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            overflow: auto;
+            position: relative;
+        }
+        
+        .preview-scroll-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .player-preview-container {
+            width: 404px;
+            height: 744px;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid var(--accent-color);
+            transform-origin: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            /* Taille fixe, ne pas laisser le navigateur redimensionner automatiquement */
+            min-width: 404px;
+            min-height: 744px;
+            max-width: 404px;
+            max-height: 744px;
+        }
+        
+        #player-preview-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: #000;
+        }
+        
+        /* Contrôles de zoom */
+        .zoom-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .zoom-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .zoom-btn:hover {
+            background-color: var(--highlight-color);
+        }
+        
+        .zoom-level {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            min-width: 60px;
+            justify-content: center;
+        }
+        
+        /* Media queries pour assurer le bon ratio sur différentes tailles d'écran */
+        @media (max-height: 700px) {
+            .player-preview-container {
+                width: 320px;  /* Ratio 9:16 (570px height * 9/16) approximatif */
+                height: 570px;
+                min-width: 320px;
+                min-height: 570px;
+                max-width: 320px;
+                max-height: 570px;
+            }
+        }
+        
+        @media (max-height: 550px) {
+            .player-preview-container {
+                width: 270px;  /* Ratio 9:16 (480px height * 9/16) approximatif */
+                height: 480px;
+                min-width: 270px;
+                min-height: 480px;
+                max-width: 270px;
+                max-height: 480px;
+            }
+        }
+        
+        .footer {
+            grid-area: footer;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .event-log {
+            flex: 1;
+            height: 100px;
+            overflow-y: auto;
+            background-color: rgba(22, 33, 62, 0.8);
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 0.85rem;
+        }
+        
+        .event-item {
+            padding: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+        }
+        
+        .event-time {
+            color: var(--highlight-color);
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        /* Metro Line Visualization */
+        .metro-line-container {
+            position: relative;
+            padding: 40px 20px;
+            margin: 40px 0;
+            background-color: rgba(22, 33, 62, 0.5);
+            border-radius: var(--border-radius);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--accent-color);
+        }
+        
+        .metro-line {
+            position: relative;
+            height: 100px;
+        }
+        
+        .metro-track {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-color: #555;
+            transform: translateY(-50%);
+            border-radius: 4px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .metro-progress {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 0%;
+            height: 8px;
+            background-color: var(--highlight-color);
+            transform: translateY(-50%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+        }
+        
+        .metro-boat {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translate(-50%, -50%);
+            transition: left 0.5s ease;
+            z-index: 10;
+            filter: drop-shadow(0 0 5px rgba(233, 69, 96, 0.7));
+            cursor: pointer;
+        }
+        
+        .metro-boat svg {
+            animation: boatFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes boatFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        .metro-stations {
+            position: relative;
+            height: 100%;
+        }
+        
+        .metro-station {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        
+        .station-marker {
+            width: 16px;
+            height: 16px;
+            background-color: var(--highlight-color);
+            border-radius: 50%;
+            position: relative;
+            left: -8px;
+            top: -4px;
+            z-index: 5;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        /* Station types avec codes et couleurs */
+        .station-marker.event {
+            background-color: #e94560 !important; /* Rouge pour événements - Forcé */
+        }
+        
+        .station-marker.chapter {
+            background-color: #2196f3 !important; /* Bleu pour chapitres - Forcé */
+        }
+        
+        .station-marker.vote {
+            background-color: #ff9800 !important; /* Orange pour votes - Forcé */
+        }
+        
+        .station-marker.entity {
+            background-color: #4caf50 !important; /* Vert pour entités - Forcé */
+        }
+        
+        .station-marker.active {
+            background-color: var(--success-color);
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.8);
+            animation: pulseGreen 2s infinite;
+        }
+        
+        @keyframes pulseGreen {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+        
+        .station-marker.next {
+            background-color: var(--warning-color);
+            box-shadow: 0 0 8px rgba(255, 152, 0, 0.8);
+            animation: pulseOrange 2s infinite;
+        }
+        
+        @keyframes pulseOrange {
+            0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+        }
+        
+        .station-label {
+            position: absolute;
+            width: 100px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-color);
+            background-color: rgba(15, 52, 96, 0.7);
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            /* Position par défaut (bas) */
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none; /* Cacher les labels */
+        }
+        
+        /* Style pour les stations du haut */
+        .metro-station.top .station-label {
+            bottom: auto;
+            top: -50px;
+            display: none; /* Cacher les labels */
+        }
+        
+        /* Style pour les stations du bas */
+        .metro-station.bottom .station-label {
+            bottom: -50px;
+            top: auto;
+            display: none; /* Cacher les labels */
+        }
+        
+        .metro-station:hover .station-label {
+            background-color: var(--highlight-color);
+            transform: translateX(-50%) scale(1.1);
+            z-index: 20;
+            display: block; /* Afficher les labels au survol uniquement */
+        }
+        
+        /* Style pour la liste détaillée */
+        .metro-details-list {
+            margin-top: 20px;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .metro-details-title {
+            font-size: 1.1rem;
+            color: var(--highlight-color);
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--accent-color);
+        }
+        
+        .metro-details-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        /* Style de tableau pour les détails des événements */
+        .metro-details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .metro-details-header {
+            background-color: rgba(15, 52, 96, 0.7);
+            color: white;
+            text-align: left;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .metro-details-header th {
+            padding: 8px 10px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .metro-details-row {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.2s;
+        }
+        
+        .metro-details-row:hover {
+            background-color: rgba(15, 52, 96, 0.6);
+        }
+        
+        .metro-details-row.active {
+            border-left: 3px solid var(--success-color);
+        }
+        
+        .metro-details-row.next {
+            border-left: 3px solid var(--warning-color);
+        }
+        
+        .metro-details-row td {
+            padding: 8px 10px;
+            font-size: 0.85rem;
+            vertical-align: middle;
+        }
+        
+        .metro-details-type {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .metro-details-marker {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .metro-details-marker.event {
+            background-color: var(--highlight-color); /* Rouge pour événements */
+        }
+        
+        .metro-details-marker.chapter {
+            background-color: var(--info-color); /* Bleu pour chapitres */
+        }
+        
+        .metro-details-marker.vote {
+            background-color: var(--warning-color); /* Orange pour votes */
+        }
+        
+        .metro-details-marker.entity {
+            background-color: var(--success-color); /* Vert pour entités */
+        }
+        
+        .metro-details-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .metro-details-btn {
+            padding: 3px 8px;
+            font-size: 0.75rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .metro-details-btn:hover {
+            background-color: var(--highlight-color);
+        }
+        
+        /* Tailles de colonnes */
+        .col-type { width: 10%; }
+        .col-name { width: 15%; }
+        .col-threshold { width: 10%; }
+        .col-duration { width: 10%; }
+        .col-params { width: 40%; }
+        .col-actions { width: 15%; }
+        
+        .metro-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .metro-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(15, 52, 96, 0.4);
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+        }
+        
+        .metro-total {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .metro-percent {
+            font-size: 1.2rem;
+            color: var(--highlight-color);
+            font-weight: bold;
+        }
+        
+        .metro-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .metro-action-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            min-width: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .metro-action-btn:hover {
+            background-color: var(--highlight-color);
+            transform: translateY(-2px);
+        }
+        
+        /* Event Editor Modal */
+        .event-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .event-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .event-modal-content {
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            position: relative;
+            border: 1px solid var(--accent-color);
+        }
+        
+        .event-modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--highlight-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        
+        .close-modal:hover {
+            color: var(--highlight-color);
+        }
+        
+        .event-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid var(--accent-color);
+            background-color: rgba(15, 52, 96, 0.4);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        /* Sequence Event Styles */
+        .sequence-container-wrapper {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            overflow-x: auto;
+        }
+        
+        .sequence-container, .sequence-actions-palette {
+            min-width: 260px;
+            max-width: 100%;
+        }
+        
+        @media (max-width: 900px) {
+            .sequence-container-wrapper {
+                flex-direction: column !important;
+                gap: 10px !important;
+            }
+            .sequence-actions-palette, .sequence-container {
+                max-width: 100% !important;
+                min-width: 0 !important;
+            }
+        }
+        
+        .sequence-container {
+            flex: 1;
+            background-color: rgba(15, 52, 96, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            min-height: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px dashed var(--accent-color);
+            cursor: default;
+            /* Force l'acceptation du drop */
+            -webkit-user-drag: none; 
+        }
+        
+        .sequence-container.drag-over {
+            background-color: rgba(15, 52, 96, 0.4);
+            border: 2px dashed var(--highlight-color);
+            cursor: copy !important;
+        }
+        
+        .sequence-actions-palette {
+            width: 250px;
+            background-color: rgba(15, 52, 96, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--accent-color);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .palette-title {
+            font-size: 1rem;
+            color: var(--highlight-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 8px;
+        }
+        
+        .action-category {
+            margin-bottom: 15px;
+        }
+        
+        .category-title {
+            font-size: 0.9rem;
+            margin: 0 0 8px 0;
+            color: var(--highlight-color);
+            opacity: 0.8;
+        }
+        
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(15, 52, 96, 0.5);
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            cursor: grab;
+            position: relative;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            -webkit-user-drag: element; /* Support Safari/WebKit */
+        }
+
+        .add-action-btn {
+            position: absolute;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--highlight-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            z-index: 5;
+        }
+
+        .add-action-btn:hover {
+            transform: scale(1.15);
+            background-color: #ff4d7a;
+        }
+        
+        .action-item:hover {
+            background-color: rgba(15, 52, 96, 0.8);
+            transform: translateX(5px);
+            border-color: var(--accent-color);
+        }
+        
+        .action-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        
+        .action-icon {
+            font-size: 1.2rem;
+        }
+        
+        .action-label {
+            font-size: 0.9rem;
+        }
+        
+        .sequence-empty-message {
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            pointer-events: none; /* Permet de cliquer à travers */
+        }
+        
+        .sequence-container.drag-over .sequence-empty-message {
+            color: var(--highlight-color);
+            font-weight: bold;
+            opacity: 1;
+        }
+        
+        .sequence-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .sequence-action {
+            background-color: rgba(15, 52, 96, 0.6);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--accent-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: grab;
+        }
+        
+        .sequence-action:hover {
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sequence-action.dragging {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            opacity: 0.8;
+            cursor: grabbing;
+        }
+        
+        /* Action Modal Styles */
+        .action-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .action-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .action-modal-content {
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+            position: relative;
+            border: 1px solid var(--accent-color);
+        }
+        
+        .action-modal-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--highlight-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Action Specific Fields */
+        #action-specific-fields {
+            background-color: rgba(15, 52, 96, 0.2);
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px dashed var(--accent-color);
+        }
+        
+        .action-specific-fields-title {
+            color: var(--highlight-color);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        
+        .btn:hover {
+            background-color: var(--highlight-color);
+        }
+        
+        /* Sound Library */
+        .sound-library {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: rgba(15, 52, 96, 0.4);
+            border-radius: var(--border-radius);
+        }
+        
+        .sound-item {
+            background-color: var(--accent-color);
+            border-radius: var(--border-radius);
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .sound-item:hover {
+            background-color: var(--highlight-color);
+            transform: translateY(-2px);
+        }
+        
+        .sound-name {
+            font-size: 0.85rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+        
+        .sound-icon {
+            font-size: 1.5rem;
+        }
+        
+        /* Media Library Styles */
+        .media-library {
+            margin-top: 20px;
+        }
+        
+        .media-library-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: rgba(15, 52, 96, 0.4);
+            border-radius: var(--border-radius);
+        }
+        
+        .media-item {
+            background-color: var(--accent-color);
+            border-radius: var(--border-radius);
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            position: relative;
+        }
+        
+        .media-item:hover {
+            background-color: var(--highlight-color);
+            transform: translateY(-2px);
+        }
+        
+        .media-item.add-new {
+            background-color: rgba(15, 52, 96, 0.7);
+            border: 2px dashed var(--accent-color);
+        }
+        
+        .media-item.add-new:hover {
+            border-color: var(--highlight-color);
+            background-color: rgba(15, 52, 96, 0.9);
+        }
+        
+        .media-name {
+            font-size: 0.85rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+        
+        .media-icon {
+            font-size: 1.5rem;
+        }
+        
+        .media-delete {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--error-color);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .media-item:hover .media-delete {
+            opacity: 1;
+        }
+        
+        .media-delete:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Tooltip styles */
+        .station-tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 100;
+            width: 200px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-align: left;
+            font-size: 0.75rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--accent-color);
+        }
+        
+        .station-tooltip h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.85rem;
+            color: var(--highlight-color);
+            border-bottom: 1px solid var(--accent-color);
+            padding-bottom: 3px;
+        }
+        
+        .station-tooltip p {
+            margin: 3px 0;
+        }
+        
+        .station-tooltip .tooltip-value {
+            font-weight: bold;
+            color: var(--highlight-color);
+        }
+        
+        /* Legend styles */
+        .metro-legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            background-color: rgba(15, 52, 96, 0.4);
+            padding: 10px;
+            border-radius: var(--border-radius);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .legend-marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+        
+        .legend-marker.event {
+            background-color: var(--highlight-color);
+        }
+        
+        .legend-marker.chapter {
+            background-color: var(--info-color);
+        }
+        
+        .legend-marker.vote {
+            background-color: var(--warning-color);
+        }
+        
+        .legend-marker.entity {
+            background-color: var(--success-color);
+        }
+        
+        /* Custom CSS for proper scaling and prevention of cropping */
+        .custom-css {
+            display: none;
+        }
+        
+        .info-box {
+            background-color: rgba(15, 52, 96, 0.3);
+            border: 1px solid var(--accent-color);
+            border-radius: var(--border-radius);
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: var(--text-color);
+        }
+        
+        .info-box p {
+            margin-bottom: 8px;
+        }
+        
+        .info-box ol, .info-box ul {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .info-box li {
+            margin-bottom: 5px;
+        }
+
+        /* Media Gallery Modal Styles */
+        .media-gallery-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .media-gallery-content {
+            background-color: var(--secondary-color);
+            width: 80%;
+            max-width: 1200px;
+            height: 80%;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .media-gallery-title {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .media-gallery-title button {
+             background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .upload-controls {
+            padding: 10px 15px;
+            background-color: rgba(15, 52, 96, 0.5);
+            display: flex;
+            align-items: center;
+        }
+        
+        .upload-controls button {
+            margin-right: 15px;
+        }
+        
+        #upload-status {
+            color: var(--text-color);
+        }
+        
+        #media-gallery-container {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .media-item {
+            background-color: var(--primary-color);
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .media-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .media-item img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+        
+        .media-item video, .media-item audio {
+            width: 100%;
+            max-height: 140px;
+        }
+        
+        .media-info {
+            padding: 8px;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .media-name {
+            font-size: 12px;
+            color: var(--text-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 130px;
+        }
+        
+        .delete-media-btn {
+            background-color: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 3px 6px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        
+        .no-media, .error {
+            color: var(--text-color);
+            text-align: center;
+            padding: 20px;
+            grid-column: 1 / -1;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .media-gallery-content {
+                width: 95%;
+                height: 90%;
+            }
+            
+            #media-gallery-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            }
+        }
+        
+        /* Styles pour le gestionnaire de journal de messages */
+        .message-log-toolbar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        
+        .message-log-toolbar .search-box {
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .message-log-toolbar .search-box input {
+            width: 100%;
+            max-width: 300px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #2c3e50;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: #fff;
+        }
+        
+        .message-log-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        
+        .message-log-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .message-log-table th, 
+        .message-log-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .message-log-table th {
+            background-color: var(--accent-color);
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .message-log-table tr:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .edit-message-btn, 
+        .delete-message-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            margin-right: 5px;
+            color: #fff;
+            border-radius: 3px;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .edit-message-btn {
+            background-color: rgba(33, 150, 243, 0.3);
+        }
+        
+        .delete-message-btn {
+            background-color: rgba(244, 67, 54, 0.3);
+        }
+        
+        .edit-message-btn:hover {
+            background-color: rgba(33, 150, 243, 0.5);
+        }
+        
+        .delete-message-btn:hover {
+            background-color: rgba(244, 67, 54, 0.5);
+        }
+        
+        #edit-message-form .form-group {
+            margin-bottom: 15px;
+        }
+        
+        #edit-message-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        #edit-message-form .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #2c3e50;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: #fff;
+        }
+        
+        #edit-message-form textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Masquer les boutons 'Ajouter X' alternatifs */
+        .sequence-actions-palette .action-alternative {
+            display: none !important;
+        }
+    </style>
+    
+    <!-- Inclure SortableJS avant le script principal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+    // Déclaration globale des variables pour éviter les redéclarations
+    window.sequenceActions = [];
+    window.actionIdCounter = 0;
+</script>
+    <script>
+    // Déclaration globale des variables pour éviter les redéclarations
+    window.sequenceActions = [];
+    window.window.actionIdCounter = window.actionIdCounter || 0;
+</script>
+    
+    <!-- Script pour définir les fonctions globales utilisées par sequence-editor.js -->
+    <script>
+        // Définition des variables et fonctions requises par sequence-editor.js
+        window.sequenceActions = window.sequenceActions || [];
+        window.actionIdCounter = window.actionIdCounter || 0;
+        
+        // Fonction pour mettre à jour l'affichage de la séquence
+        function updateSequenceDisplay() {
+            const container = document.getElementById('sequence-container');
+            const emptyMessage = document.querySelector('.sequence-empty-message');
+            
+            // Afficher/masquer le message "vide"
+            if (sequenceActions.length === 0) {
+                if (emptyMessage) emptyMessage.style.display = 'block';
+            } else {
+                if (emptyMessage) emptyMessage.style.display = 'none';
+            }
+            
+            // Vider le conteneur (sauf le message vide)
+            if (container) {
+                Array.from(container.children).forEach(child => {
+                    if (!child.classList.contains('sequence-empty-message')) {
+                        container.removeChild(child);
+                    }
+                });
+                
+                // Ajouter chaque action à l'affichage
+                sequenceActions.forEach(action => {
+                    if (typeof createActionElement === 'function') {
+                        const actionElement = createActionElement(action);
+                        container.appendChild(actionElement);
+                    }
+                });
+                
+                // Activer le tri par glisser-déposer
+                if (typeof enableDragAndDrop === 'function') {
+                    enableDragAndDrop();
+                }
+            }
+        }
+        
+        // Créer un élément DOM pour une action
+        function createActionElement(action) {
+            // Récupérer le template
+            const template = document.getElementById('action-template');
+            if (!template) {
+                console.error("Template #action-template introuvable!");
+                return document.createElement('div');
+            }
+            
+            const templateContent = template.content.cloneNode(true);
+            const actionElement = templateContent.querySelector('.sequence-action');
+            
+            // Définir l'ID de l'action
+            actionElement.dataset.actionId = action.id;
+            
+            // Définir l'icône et le nom du type
+            let typeIcon = '⚙️';
+            let typeName = 'Action personnalisée';
+            
+            switch (action.type) {
+                case 'sound': typeIcon = '🔊'; typeName = 'Son'; break;
+                case 'message': typeIcon = '💬'; typeName = 'Message'; break;
+                case 'door': typeIcon = '🚪'; typeName = 'Porte'; break;
+                case 'light': typeIcon = '💡'; typeName = 'Lumière'; break;
+                case 'video': typeIcon = '🎬'; typeName = 'Vidéo'; break;
+                case 'image': typeIcon = '🖼️'; typeName = 'Image'; break;
+                case 'boat': typeIcon = '⛵'; typeName = 'Bateau'; break;
+                case 'gif': typeIcon = '🎞️'; typeName = 'GIF'; break;
+                case 'pause': typeIcon = '⏱️'; typeName = 'Pause'; break;
+                case 'custom': typeIcon = '🔧'; typeName = 'Personnalisé'; break;
+            }
+            
+            // Mettre à jour l'affichage avec les valeurs réelles
+            actionElement.querySelector('.action-type-indicator').textContent = typeIcon;
+            actionElement.querySelector('.action-name').textContent = typeName;
+            
+            // Résumé des paramètres
+            let paramSummary = '';
+            if (action.type === 'pause') {
+                paramSummary = 'Attendre ' + action.duration + ' secondes';
+            } else if (action.parameters) {
+                try {
+                    const params = action.parameters;
+                    switch (action.type) {
+                        case 'sound':
+                            paramSummary = `Fichier: ${params.file || 'Non spécifié'}, Volume: ${params.volume || 1}`;
+                            break;
+                        case 'message':
+                            paramSummary = `"${params.text || 'Texte non spécifié'}"`;
+                            break;
+                        case 'door':
+                            paramSummary = `Porte ${params.doorId || 'X'}: ${params.action || 'open'}`;
+                            break;
+                        case 'boat':
+                            paramSummary = `Action: ${params.action || 'stop'}`;
+                            break;
+                        default:
+                            paramSummary = Object.keys(params).map(key => `${key}: ${params[key]}`).join(', ');
+                    }
+                } catch (e) {
+                    paramSummary = 'Erreur dans les paramètres';
+                }
+            }
+            
+            actionElement.querySelector('.action-param-display').textContent = paramSummary;
+            
+            // Affichage de la durée
+            let durationDisplay = '';
+            if (action.type !== 'pause' && action.duration > 0) {
+                durationDisplay = `Durée: ${action.duration}s`;
+            }
+            actionElement.querySelector('.action-duration-display').textContent = durationDisplay;
+            
+            // Ajouter les écouteurs d'événements pour les boutons
+            const editBtn = actionElement.querySelector('.action-edit-btn');
+            const deleteBtn = actionElement.querySelector('.action-delete-btn');
+            
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    if (typeof openActionModal === 'function') {
+                        openActionModal(action.id);
+                    }
+                });
+            }
+            
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', () => {
+                    if (confirm('Êtes-vous sûr de vouloir supprimer cette action ?')) {
+                        sequenceActions = sequenceActions.filter(a => a.id !== action.id);
+                        updateSequenceDisplay();
+                    }
+                });
+            }
+            
+            return actionElement;
+        }
+        
+        // Fonction pour activer le drag & drop
+        function enableDragAndDrop() {
+            console.log('=== INITIALISATION DRAG & DROP (RÉORDONNANCEMENT) ===');
+            
+            const container = document.getElementById('sequence-container');
+            if (!container) {
+                console.error("Container #sequence-container introuvable!");
+                return;
+            }
+            
+            const actions = container.querySelectorAll('.sequence-action');
+            
+            console.log(`Nombre d'actions dans la séquence: ${actions.length}`);
+            
+            // Si pas d'actions, rien à faire
+            if (actions.length === 0) {
+                return;
+            }
+            
+            // Variables globales du drag
+            let draggedItem = null;
+            let draggedId = null;
+            
+            // Ajouter un indicateur visuel d'aide
+            if (!container.querySelector('.reorder-help')) {
+                const helpText = document.createElement('div');
+                helpText.className = 'reorder-help';
+                helpText.textContent = '↕️ Glissez les actions pour les réordonner';
+                helpText.style.cssText = 'color: #aaa; font-style: italic; margin: 10px 0; text-align: center; font-size: 0.9em;';
+                container.insertBefore(helpText, actions[0]);
+            }
+            
+            // Configurer chaque action pour le drag & drop
+            actions.forEach(action => {
+                // 1. Ajouter une poignée de glissement si nécessaire
+                if (!action.querySelector('.drag-handle')) {
+                    const handle = document.createElement('div');
+                    handle.className = 'drag-handle';
+                    handle.innerHTML = '☰';
+                    handle.style.cssText = 'margin-right: 8px; color: #666; cursor: grab; padding: 0 5px;';
+                    action.insertBefore(handle, action.firstChild);
+                }
+                
+                // 2. Définir l'élément comme glissable
+                action.setAttribute('draggable', 'true');
+                action.style.cursor = 'grab';
+                
+                // 3. Événement de début de glissement
+                action.addEventListener('dragstart', (e) => {
+                    // Stocker l'élément et son ID
+                    draggedItem = action;
+                    draggedId = action.dataset.actionId;
+                    
+                    console.log(`[REORDER] Début du drag: Action #${draggedId}`);
+                    
+                    // Définir les données
+                    e.dataTransfer.setData('text/plain', `move-${draggedId}`);
+                    e.dataTransfer.effectAllowed = 'move';
+                    
+                    // Style visuel
+                    setTimeout(() => {
+                        action.classList.add('dragging');
+                        action.style.opacity = '0.4';
+                    }, 0);
+                });
+                
+                // 4. Relâchement du glissement
+                action.addEventListener('dragend', (e) => {
+                    console.log('[REORDER] Fin du drag');
+                    
+                    // Nettoyer les styles
+                    action.classList.remove('dragging');
+                    action.style.opacity = '';
+                    
+                    // Nettoyer les variables
+                    draggedItem = null;
+                    draggedId = null;
+                    
+                    // Enlever tous les indicateurs visuels
+                    document.querySelectorAll('.drop-before, .drop-after').forEach(el => {
+                        el.classList.remove('drop-before', 'drop-after');
+                    });
+                });
+            });
+            
+            // Fonction helper pour trouver l'action la plus proche du point Y
+            function getClosestActionElement(clientY) {
+                // Récupérer toutes les actions (après mise à jour potentielle)
+                const actions = container.querySelectorAll('.sequence-action');
+                if (actions.length === 0) return null;
+                
+                // Si une seule action, c'est forcément avant
+                if (actions.length === 1) {
+                    return { element: actions[0], position: 'before' };
+                }
+                
+                // Parcourir toutes les actions pour trouver la plus proche
+                for (let i = 0; i < actions.length; i++) {
+                    const action = actions[i];
+                    
+                    // Ne pas considérer l'élément en cours de glissement
+                    if (action === draggedItem) continue;
+                    
+                    const rect = action.getBoundingClientRect();
+                    const middleY = rect.top + rect.height / 2;
+                    
+                    // Si on est au-dessus du milieu, c'est avant
+                    if (clientY < middleY) {
+                        return { element: action, position: 'before' };
+                    }
+                    
+                    // Si c'est la dernière action, c'est après
+                    if (i === actions.length - 1) {
+                        return { element: action, position: 'after' };
+                    }
+                }
+                
+                // Par défaut, après la première action
+                return { element: actions[0], position: 'after' };
+            }
+            
+            // Attacher les gestionnaires au conteneur global
+            // GESTIONNAIRES POUR LE CONTENEUR
+            const handleContainerDragOver = (e) => {
+                // Crucial pour autoriser le drop
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Si aucun élément n'est en cours de glissement, ne rien faire
+                if (!draggedItem && !document.querySelector('.dragging')) return;
+                
+                // Trouver l'élément cible le plus proche
+                const closest = getClosestActionElement(e.clientY);
+                if (!closest) return;
+                
+                // Déterminer si on est au-dessus ou en-dessous du point médian
+                const { element, position } = closest;
+                
+                // Nettoyer les indicateurs précédents
+                document.querySelectorAll('.drop-before, .drop-after').forEach(el => {
+                    el.classList.remove('drop-before', 'drop-after');
+                });
+                
+                // Appliquer l'indicateur visuel
+                element.classList.add(position === 'before' ? 'drop-before' : 'drop-after');
+            };
+            
+            const handleContainerDrop = (e) => {
+                // Crucial pour traiter le drop
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('[REORDER] Drop détecté sur le conteneur');
+                
+                // Vérifier qu'on a bien un élément en cours de glissement
+                let draggedElement = draggedItem;
+                let draggedIdLocal = draggedId;
+                if (!draggedElement || !draggedIdLocal) {
+                    draggedElement = document.querySelector('.dragging.sequence-action');
+                    if (draggedElement) {
+                        draggedIdLocal = draggedElement.dataset.actionId;
+                        console.log('[REORDER] Élément glissé récupéré via classe dragging:', draggedIdLocal);
+                    } else {
+                        console.log('[REORDER] Drop annulé: pas d\'élément glissé détecté');
+                        return;
+                    }
+                }
+                
+                // Trouver l'élément cible le plus proche
+                const closest = getClosestActionElement(e.clientY);
+                if (!closest) {
+                    console.log('[REORDER] Drop annulé: pas de cible trouvée');
+                    return;
+                }
+                
+                // Extraire les informations de la cible
+                const { element, position } = closest;
+                const targetId = element.dataset.actionId;
+                
+                console.log(`[REORDER] Drop: Action #${draggedIdLocal} ${position} #${targetId}`);
+                
+                // Effectuer la réorganisation
+                reorderActions(draggedIdLocal, targetId, position === 'before');
+                
+                // Mettre à jour l'affichage
+                updateSequenceDisplay();
+                
+                // Nettoyer les styles
+                document.querySelectorAll('.drop-before, .drop-after').forEach(el => {
+                    el.classList.remove('drop-before', 'drop-after');
+                });
+                if (draggedElement) {
+                    draggedElement.classList.remove('dragging');
+                    draggedElement.style.opacity = '';
+                }
+                draggedItem = null;
+                draggedId = null;
+            };
+            
+            container.addEventListener('dragover', handleContainerDragOver);
+            container.addEventListener('drop', handleContainerDrop);
+            
+            // AJOUTER UN CONTENEUR À LA FIN POUR DÉPOSER
+            const dropZoneEnd = document.createElement('div');
+            dropZoneEnd.className = 'end-drop-zone';
+            dropZoneEnd.innerHTML = '<div>Déposer ici pour déplacer à la fin</div>';
+            dropZoneEnd.style.cssText = `
+                padding: 15px;
+                margin-top: 15px;
+                border: 2px dashed #ccc;
+                border-radius: 8px;
+                text-align: center;
+                color: #888;
+                background-color: rgba(0,0,0,0.05);
+            `;
+            
+            dropZoneEnd.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZoneEnd.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+                dropZoneEnd.style.borderColor = '#4CAF50';
+            });
+            
+            dropZoneEnd.addEventListener('dragleave', () => {
+                dropZoneEnd.style.backgroundColor = 'rgba(0,0,0,0.05)';
+                dropZoneEnd.style.borderColor = '#ccc';
+            });
+            
+            dropZoneEnd.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                dropZoneEnd.style.backgroundColor = 'rgba(0,0,0,0.05)';
+                dropZoneEnd.style.borderColor = '#ccc';
+                
+                if (!draggedId) return;
+                    
+                console.log(`[REORDER] Action #${draggedId} déplacée à la fin`);
+                moveActionToEnd(draggedId);
+                updateSequenceDisplay();
+            });
+            
+            // Ajouter la zone de drop à la fin
+            if (!container.querySelector('.end-drop-zone')) {
+                container.appendChild(dropZoneEnd);
+            }
+            
+            // STYLES CSS pour le feedback visuel
+            const cssRules = `
+                .sequence-action {
+                    transition: all 0.2s ease;
+                    position: relative;
+                    border: 1px solid transparent;
+                }
+                
+                .sequence-action.dragging {
+                    opacity: 0.4 !important;
+                    background-color: rgba(0,0,0,0.05);
+                }
+                
+                .sequence-action.drop-before {
+                    border-top: 3px solid #4CAF50 !important;
+                    margin-top: -3px;
+                }
+                
+                .sequence-action.drop-after {
+                    border-bottom: 3px solid #4CAF50 !important;
+                    margin-bottom: -3px;
+                }
+                
+                .drag-handle {
+                    display: inline-block;
+                    cursor: grab;
+                }
+                
+                .drag-handle:hover {
+                    color: #4CAF50;
+                }
+                
+                .end-drop-zone:hover {
+                    background-color: rgba(76, 175, 80, 0.1) !important;
+                    border-color: #4CAF50 !important;
+                }
+            `;
+            
+            // Ajouter le style s'il n'existe pas déjà
+            if (!document.getElementById('reorder-styles')) {
+                const style = document.createElement('style');
+                style.id = 'reorder-styles';
+                style.textContent = cssRules;
+                document.head.appendChild(style);
+            }
+        }
+        
+        // Fonction pour réorganiser les actions
+        function reorderActions(sourceId, targetId, isBefore) {
+            // Convertir en nombres
+            sourceId = parseInt(sourceId, 10);
+            targetId = parseInt(targetId, 10);
+            
+            // Trouver les actions source et cible
+            const sourceIndex = sequenceActions.findIndex(a => a.id === sourceId);
+            const targetIndex = sequenceActions.findIndex(a => a.id === targetId);
+            
+            // Vérifier que les deux actions existent
+            if (sourceIndex === -1 || targetIndex === -1) {
+                console.error('Une des actions introuvable:', sourceId, targetId);
+                return;
+            }
+            
+            // Ne rien faire si on déplace sur soi-même
+            if (sourceIndex === targetIndex) {
+                console.log('Même position, aucun changement');
+                return;
+            }
+            
+            // Extraire l'action source
+            const [movedAction] = sequenceActions.splice(sourceIndex, 1);
+            
+            // Calculer la nouvelle position
+            let newPosition = targetIndex;
+            if (sourceIndex < targetIndex && !isBefore) {
+                // Ajustement pour la suppression de l'élément source
+                newPosition--;
+            }
+            if (isBefore) {
+                // Insérer avant
+                newPosition = Math.max(0, newPosition);
+            } else {
+                // Insérer après
+                newPosition = Math.min(sequenceActions.length, newPosition + 1);
+            }
+            
+            // Insérer l'action à sa nouvelle position
+            sequenceActions.splice(newPosition, 0, movedAction);
+            
+            console.log(`Action #${sourceId} déplacée de l'index ${sourceIndex} vers ${newPosition}`);
+        }
+        
+        // Fonction pour déplacer une action à la fin
+        function moveActionToEnd(actionId) {
+            // Convertir en nombre
+            actionId = parseInt(actionId, 10);
+            
+            // Trouver l'action
+            const index = sequenceActions.findIndex(a => a.id === actionId);
+            
+            // Vérifier que l'action existe
+            if (index === -1) {
+                console.error('Action introuvable:', actionId);
+                return;
+            }
+            
+            // Si déjà à la fin, ne rien faire
+            if (index === sequenceActions.length - 1) {
+                console.log('Déjà à la fin, aucun changement');
+                return;
+            }
+            
+            // Extraire l'action et la remettre à la fin
+            const [movedAction] = sequenceActions.splice(index, 1);
+            sequenceActions.push(movedAction);
+            
+            console.log(`Action #${actionId} déplacée de l'index ${index} vers la fin`);
+        }
+        
+        // Exposer les fonctions au niveau global
+        window.sequenceActions = sequenceActions;
+        window.actionIdCounter = actionIdCounter;
+        window.updateSequenceDisplay = updateSequenceDisplay;
+        window.createActionElement = createActionElement;
+        window.enableDragAndDrop = enableDragAndDrop;
+        window.reorderActions = reorderActions;
+        window.moveActionToEnd = moveActionToEnd;
+    </script>
+    
+    <!-- Inclure sequence-editor.js qui contient createQuickAction et initSequenceEditing -->
+    <script src="sequence-editor.js"></script>
+</head>
+<body>
+    <div class="admin-panel">
+        <header class="header">
+            <h1>SETHOS AI - Admin Interface</h1>
+            <!-- Boutons de sauvegarde et de chargement -->
+            <div class="save-load-controls">
+                <button id="save-config-btn" class="btn">Sauvegarder Configuration</button>
+                <button id="load-config-btn" class="btn">Charger Configuration</button>
+                <input type="file" id="config-file-input" accept=".json" style="display: none;">
+            </div>
+        </header>
+        
+        <aside class="sidebar">
+            <!-- Server Controls -->
+            <div class="control-section">
+                <h2 class="section-title"><span class="icon">🖥️</span>SERVER CONTROLS</h2>
+                <div class="status-container">
+                    <span class="status-label">Serveur:</span>
+                    <span id="server-status" class="status inactive">ARRÊTÉ</span>
+                </div>
+                <div class="button-group">
+                    <button id="start-server-btn">DÉMARRER LE SERVEUR</button>
+                    <button id="stop-server-btn" disabled>ARRÊTER LE SERVEUR</button>
+                    <button id="open-player-btn">OUVRIR LA VUE JOUEUR</button>
+                </div>
+            </div>
+            
+            <!-- TikTok Integration -->
+            <div class="control-card">
+                <h2 class="section-title"><span class="icon">📱</span>TIKTOK INTEGRATION</h2>
+                <div class="status-row">
+                    <span class="status-label">TikTok API:</span>
+                    <span id="tiktok-status" class="status inactive">DÉCONNECTÉ</span>
+                </div>
+                <div class="input-row">
+                    <label for="tiktok-username">Nom d'utilisateur TikTok:</label>
+                    <input type="text" id="tiktok-username" placeholder="@username">
+                </div>
+                <div class="button-group">
+                    <button id="connect-tiktok-btn">CONNECTER TIKTOK</button>
+                    <button id="disconnect-tiktok-btn" disabled>DÉCONNECTER TIKTOK</button>
+                </div>
+                <div class="tiktok-stats" id="tiktok-stats" style="display: none; margin-top: 10px;">
+                    <div class="stats-row">
+                        <span>Spectateurs: <b id="tiktok-viewers">0</b></span>
+                        <span>Commentaires: <b id="tiktok-comments">0</b></span>
+                    </div>
+                    <div class="stats-row">
+                        <span>Likes: <b id="tiktok-likes">0</b></span>
+                        <span>Dons: <b id="tiktok-gifts">0</b></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Donation Simulator -->
+            <div class="control-section">
+                <h2 class="section-title"><span class="icon">💰</span>DONATION SIMULATOR</h2>
+                <div class="form-group">
+                    <label for="donation-amount">Montant (€)</label>
+                    <input type="number" id="donation-amount" min="1" value="5" step="1">
+                </div>
+                <div class="form-group">
+                    <label for="donation-name">Nom du donateur</label>
+                    <input type="text" id="donation-name" placeholder="Anonyme">
+                </div>
+                <div class="button-group">
+                    <button id="simulate-donation-btn">SIMULER UN DON</button>
+                </div>
+            </div>
+            
+            <!-- Media Management Section -->
+            <div class="control-section">
+                <h2 class="section-title"><span class="icon">🖼️</span>GESTION DES MÉDIAS</h2>
+                <div class="button-group">
+                    <button id="open-media-gallery-btn">OUVRIR LA GALERIE</button>
+                    <button id="upload-new-media-btn-main">AJOUTER UN MÉDIA</button>
+                </div>
+            </div>
+            
+            <!-- Scenario Control Section removed to avoid confusion with Metro Line -->
+        </aside>
+        
+        <main class="main-content">
+            <!-- Metro Line Visualization -->
+            <div class="metro-container">
+                <h2 class="metro-title">PROGRESSION DES DONATIONS - LIGNE DE MÉTRO</h2>
+                
+                <div class="metro-line-container">
+                    <div class="metro-line">
+                        <div class="metro-track"></div>
+                        <div class="metro-progress" id="metro-progress"></div>
+                        <div class="metro-boat" id="metro-boat">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="var(--highlight-color)">
+                                <path d="M20,21C19.4,21 19,20.6 19,20H5C5,20.6 4.6,21 4,21H3C2.4,21 2,20.6 2,20V12H22V20C22,20.6 21.6,21 21,21H20M12,3C13.1,3 14,3.9 14,5H18V7H16V9H18V11H16V13H14V11H10V13H8V11H6V9H8V7H6V5H10C10,3.9 10.9,3 12,3M12,5C11.4,5 11,4.6 11,4C11,3.4 11.4,3 12,3C12.6,3 13,3.4 13,4C13,4.6 12.6,5 12,5Z" />
+                            </svg>
+                        </div>
+                        
+                        <!-- Metro Stations - Dynamically generated -->
+                        <div class="metro-stations" id="metro-stations">
+                            <div class="metro-station bottom" style="left: 0%;">
+                                <div class="station-marker chapter">C</div>
+                                <div class="station-label">Départ<br>0€</div>
+                            </div>
+                            <div class="metro-station top" style="left: 100%;">
+                                <div class="station-marker chapter">C</div>
+                                <div class="station-label">Final<br>${GOAL_AMOUNT}€</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Légende des stations -->
+                    <div class="metro-legend">
+                        <div class="legend-item">
+                            <div class="legend-marker event">E</div>
+                            <span>Événement</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker chapter">C</div>
+                            <span>Chapitre</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker vote">V</div>
+                            <span>Vote</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker entity">N</div>
+                            <span>Entité</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker next">⏩</div>
+                            <span>Prochain</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-marker active">✓</div>
+                            <span>Activé</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Liste détaillée des stations/événements -->
+                    <div class="metro-details-list">
+                        <div class="metro-details-title">Liste détaillée des événements</div>
+                        <div class="metro-details-grid" id="metro-details-grid">
+                            <table class="metro-details-table">
+                                <thead class="metro-details-header">
+                                    <tr>
+                                        <th class="col-type">Type</th>
+                                        <th class="col-name">Nom</th>
+                                        <th class="col-threshold">Seuil (€)</th>
+                                        <th class="col-duration">Durée (s)</th>
+                                        <th class="col-params">Paramètres</th>
+                                        <th class="col-actions">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="metro-details-body">
+                                    <!-- Les événements seront injectés dynamiquement ici -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="metro-controls">
+                        <div class="metro-info">
+                            <div class="metro-total">Total des dons: <span id="total-donation-amount">0</span>€ / 2000€</div>
+                            <div class="metro-percent"><span id="donation-percent">0</span>%</div>
+                        </div>
+                        
+                        <div class="metro-actions">
+                            <button class="metro-action-btn" id="trigger-event-btn">
+                                <span class="icon">🎬</span>Déclencher l'événement actuel
+                            </button>
+                            <button class="metro-action-btn" id="add-event-btn">
+                                <span class="icon">➕</span>Ajouter un événement
+                            </button>
+                            <button class="metro-action-btn" id="manage-events-btn">
+                                <span class="icon">📋</span>Gérer les événements
+                            </button>
+                            <button class="metro-action-btn" id="reset-donations-btn">
+                                <span class="icon">🔄</span>Réinitialiser les donations
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Game Preview -->
+            <div class="preview-container" id="preview-container">
+                <div class="preview-scroll-container" id="preview-scroll-container">
+                    <div class="player-preview-container" id="player-preview-container">
+                        <iframe id="player-preview-iframe" src="about:blank" sandbox="allow-same-origin allow-scripts"></iframe>
+                    </div>
+                </div>
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="zoom-out-btn">-</button>
+                    <div class="zoom-level" id="zoom-level">100%</div>
+                    <button class="zoom-btn" id="zoom-in-btn">+</button>
+                    <button class="zoom-btn" id="zoom-reset-btn">↺</button>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <div class="event-log" id="event-log">
+                <!-- Log entries will be added here -->
+            </div>
+        </footer>
+        
+        <!-- Event Editor Modal -->
+        <div class="event-modal" id="event-modal">
+            <div class="event-modal-content event-modal-with-preview" style="width: 95%; max-width: 1500px; height: 90vh; max-height: 90vh;">
+                <div class="event-modal-title">
+                    <span id="modal-title">Ajouter/Modifier un événement</span>
+                    <button id="close-modal" class="close-modal">×</button>
+                </div>
+                <div class="event-editor-container">
+                    <div class="event-editor-form">
+                <form id="event-form">
+                    <div class="form-group">
+                        <label for="event-name">Nom de l'événement:</label>
+                        <input type="text" id="event-name" required>
+                    </div>
+                            <!-- Type d'événement supprimé -->
+                            <div class="form-group">
+                                <label for="event-threshold">Seuil (€):</label>
+                                <input type="number" id="event-threshold" min="0" required>
+                            </div>
+                            
+                            <!-- Options pour événement simple supprimées -->
+
+                            <!-- Options pour séquence d'événements (toujours visible) -->
+                            <div id="sequence-event-options" style="display: block;">
+                                <h4 style="margin-bottom: 15px; color: var(--highlight-color);">Séquence d'actions</h4>
+                                <div class="sequence-container-wrapper">
+                                    <div class="sequence-container" id="sequence-container">
+                                        <!-- Les actions de la séquence seront ajoutées ici -->
+                                        <p class="sequence-empty-message">Glissez des actions depuis la palette de droite ou double-cliquez dessus.</p>
+                                    </div>
+                                    
+                                    <div class="sequence-actions-palette">
+                                        <h3 class="palette-title">Actions disponibles</h3>
+                                        <div class="action-category">
+                                            <h4 class="category-title">Contrôles</h4>
+                                            <div class="action-item" draggable="true" data-action-type="pause">
+                                                <span class="action-icon">⏱️</span>
+                                                <span class="action-label">Pause</span>
+                                                <button class="add-action-btn" data-action-type="pause">+</button>
+                                            </div>
+                                            <div class="action-alternative">
+                                                <button class="action-alt-btn" data-action-type="pause">Ajouter Pause</button>
+                                            </div>
+                                            <div class="action-item" draggable="true" data-action-type="boat">
+                                                <span class="action-icon">⛵</span>
+                                                <span class="action-label">Bateau</span>
+                                                <button class="add-action-btn" data-action-type="boat">+</button>
+                                            </div>
+                                            <div class="action-alternative">
+                                                <button class="action-alt-btn" data-action-type="boat">Ajouter Bateau</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="action-category">
+                                            <h4 class="category-title">Média</h4>
+                                            <div class="action-item" draggable="true" data-action-type="sound">
+                                                <span class="action-icon">🔊</span>
+                                                <span class="action-label">Son</span>
+                                                <button class="add-action-btn" data-action-type="sound">+</button>
+                                            </div>
+                                            <div class="action-alternative">
+                                                <button class="action-alt-btn" data-action-type="sound">Ajouter Son</button>
+                                            </div>
+                                            <div class="action-item" draggable="true" data-action-type="video">
+                                                <span class="action-icon">🎬</span>
+                                                <span class="action-label">Vidéo</span>
+                                                <button class="add-action-btn" data-action-type="video">+</button>
+                                            </div>
+                                            <div class="action-alternative">
+                                                <button class="action-alt-btn" data-action-type="video">Ajouter Vidéo</button>
+                                            </div>
+                                            <div class="action-item" draggable="true" data-action-type="image">
+                                                <span class="action-icon">🖼️</span>
+                                                <span class="action-label">Image</span>
+                                                <button class="add-action-btn" data-action-type="image">+</button>
+                                            </div>
+                                            <div class="action-alternative">
+                                                <button class="action-alt-btn" data-action-type="image">Ajouter Image</button>
+                                            </div>
+                                            <div class="action-item" draggable="true" data-action-type="gif">
+                                                <span class="action-icon">🎞️</span>
+                                                <span class="action-label">GIF</span>
+                                                <button class="add-action-btn" data-action-type="gif">+</button>
+                                            </div>
+                                            <div class="action-alternative">
+                                                <button class="action-alt-btn" data-action-type="gif">Ajouter GIF</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="action-category">
+                                            <h4 class="category-title">Effets</h4>
+                                            <div class="action-item" draggable="true" data-action-type="door">
+                                                <span class="action-icon">🚪</span>
+                                                <span class="action-label">Porte</span>
+                                                <button class="add-action-btn" data-action-type="door">+</button>
+                                            </div>
+                                            <div class="action-alternative">
+                                                <button class="action-alt-btn" data-action-type="door">Ajouter Porte</button>
+                                            </div>
+                                            <div class="action-item" draggable="true" data-action-type="light">
+                                                <span class="action-icon">💡</span>
+                                                <span class="action-label">Lumière</span>
+                                                <button class="add-action-btn" data-action-type="light">+</button>
+                                            </div>
+                                            <div class="action-alternative">
+                                                <button class="action-alt-btn" data-action-type="light">Ajouter Lumière</button>
+                                            </div>
+                                            <div class="action-item" draggable="true" data-action-type="message">
+                                                <span class="action-icon">💬</span>
+                                                <span class="action-label">Message</span>
+                                                <button class="add-action-btn" data-action-type="message">+</button>
+                                            </div>
+                                            <div class="action-alternative">
+                                                <button class="action-alt-btn" data-action-type="message">Ajouter Message</button>
+                                            </div>
+                                            <div class="action-item" draggable="true" data-action-type="custom">
+                                                <span class="action-icon">🔧</span>
+                                                <span class="action-label">Personnalisé</span>
+                                                <button class="add-action-btn" data-action-type="custom">+</button>
+                                            </div>
+                                            <div class="action-alternative">
+                                                <button class="action-alt-btn" data-action-type="custom">Ajouter Personnalisé</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="sequence-controls" style="margin-top: 20px;">
+                                    <!-- Bouton Ajouter une action supprimé -->
+                                    <button type="button" id="clear-sequence-btn" class="btn btn-danger"><i class="fas fa-trash"></i> Vider la séquence</button>
+                                </div>
+                    </div>
+                    
+                            <!-- Autres options (Bibliothèques de médias, etc.) peuvent être ajoutées ici si nécessaire -->
+
+                            <div class="button-group" style="margin-top: 20px;">
+                        <button type="button" id="test-event-btn">Tester l'événement</button>
+                        <button type="submit" id="save-event-btn">Enregistrer</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Panneau de prévisualisation supprimé -->
+                    <!-- 
+                    <div class="event-preview-panel">
+                        <h3 class="preview-title">Prévisualisation</h3>
+                        <div class="preview-frame-container">
+                            <iframe id="event-preview-iframe" src="about:blank" sandbox="allow-same-origin allow-scripts"></iframe>
+                        </div>
+                        <div class="preview-controls">
+                            <button type="button" id="preview-event-btn" class="btn">Prévisualiser</button>
+                            <button type="button" id="preview-reset-btn" class="btn">Réinitialiser</button>
+                        </div>
+                        <div class="preview-log" id="preview-log">
+                            <div class="log-title">Journal d'exécution</div>
+                            <div class="log-content" id="preview-log-content"></div>
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Template de l'action pour la séquence (caché) -->
+        <template id="action-template">
+            <div class="sequence-action" data-action-id="{{id}}">
+                <div class="sequence-action-header">
+                    <div class="sequence-action-title">
+                        <span class="action-move-handle">↕️</span>
+                        <span class="action-type-indicator">{{typeIcon}}</span>
+                        <span class="action-name">{{typeName}}</span>
+                    </div>
+                    <div class="sequence-action-controls">
+                        <button type="button" class="action-edit-btn">✏️</button>
+                        <button type="button" class="action-delete-btn">🗑️</button>
+                    </div>
+                </div>
+                <div class="sequence-action-details">
+                    <div class="action-param-display">{{paramSummary}}</div>
+                    <div class="action-duration-display">{{durationDisplay}}</div>
+                </div>
+            </div>
+        </template>
+        
+        <!-- Modal d'ajout/édition d'action -->
+        <div class="action-modal" id="action-modal">
+            <div class="action-modal-content">
+                <div class="action-modal-title">
+                    <span id="action-modal-title">Ajouter une action</span>
+                    <button id="close-action-modal" class="close-modal">×</button>
+                </div>
+                <form id="action-form">
+                    <div class="form-group">
+                        <label for="action-type">Type d'action:</label>
+                        <select id="action-type" required>
+                            <option value="">Sélectionnez un type</option>
+                            <option value="sound">Son</option>
+                            <option value="message">Message</option>
+                            <option value="door">Porte</option>
+                            <option value="light">Lumière</option>
+                            <option value="video">Vidéo</option>
+                            <option value="image">Image</option>
+                            <option value="boat">Bateau</option>
+                            <option value="gif">GIF</option>
+                            <option value="pause">Pause</option>
+                            <option value="custom">Personnalisé</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="action-duration-group">
+                        <label for="action-duration">Durée (secondes, 0 = permanent):</label>
+                        <input type="number" id="action-duration" min="0" value="0" step="0.1">
+                    </div>
+                    
+                    <div class="form-group" id="action-parameters-group">
+                        <label for="action-parameters">Paramètres (JSON):</label>
+                        <textarea id="action-parameters" rows="5">{}</textarea>
+                    </div>
+                    
+                    <!-- Champs spécifiques pour chaque type d'action -->
+                    <div id="action-specific-fields">
+                        <!-- Ces champs seront générés dynamiquement selon le type d'action -->
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" id="action-helper-btn">Assistant</button>
+                        <button type="button" id="save-action-btn">Enregistrer l'action</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Media Gallery Modal (ou section séparée) -->
+        <div class="media-gallery-modal" id="media-gallery-modal" style="display: none;">
+            <div class="media-gallery-content">
+                <div class="media-gallery-title">
+                    <span>Galerie de Médias</span>
+                    <button id="close-media-gallery-btn">×</button>
+                </div>
+                <div class="upload-controls">
+                    <button id="upload-new-media-btn" class="btn">Ajouter un fichier</button>
+                    <span id="upload-status"></span>
+                </div>
+                <div id="media-gallery-container">
+                    <!-- Items de la galerie chargés ici -->
+                    <p>Chargement de la galerie...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hidden file input for media uploads -->
+        <input type="file" id="media-file-input" style="display: none;">
+    </div>
+
+    <!-- Inclure les scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+    // Déclaration globale des variables pour éviter les redéclarations
+    window.sequenceActions = [];
+    window.actionIdCounter = 0;
+</script>
+    <script>
+    // Déclaration globale des variables pour éviter les redéclarations
+    window.sequenceActions = [];
+    window.window.actionIdCounter = window.actionIdCounter || 0;
+</script>
+    <!-- Inclusion du script event_preview.js supprimée -->
+    <!-- <script src="js/event_preview.js"></script> -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Supprimer tout canvas avec ces dimensions s'il existe
+            const canvas = document.querySelector('canvas[width="1060"][height="4375"]');
+            if (canvas) {
+                console.log("ADMIN: Suppression du canvas de prévisualisation supplémentaire au démarrage");
+                canvas.remove();
+            }
+            
+            // Observer le conteneur de prévisualisation pour les ajouts de canvas après coup
+            const previewContainer = document.getElementById('preview-container'); // Cible le div principal
+            if (previewContainer) {
+                console.log("ADMIN: Setting up MutationObserver for #preview-container");
+                const observer = new MutationObserver(function(mutationsList) {
+                    for(const mutation of mutationsList) {
+                        if (mutation.type === 'childList') {
+                            mutation.addedNodes.forEach(node => {
+                                if (node.nodeName.toUpperCase() === 'CANVAS') {
+                                    console.warn("ADMIN WARN: Un canvas a été ajouté à #preview-container APRÈS l'initialisation !", node);
+                                    // Tenter d'afficher la stack trace
+                                    console.trace("Stack trace for canvas addition:"); 
+                                    // Optionnel: Supprimer immédiatement le canvas indésirable
+                                    // node.remove(); 
+                                    // console.log("ADMIN: Canvas indésirable supprimé par MutationObserver.");
+                                }
+                                // Vérifier aussi si le canvas est ajouté à l'intérieur de l'iframe container
+                                if (node.id === 'player-preview-container' || node.id === 'event-preview-iframe') {
+                                    const innerCanvas = node.querySelector ? node.querySelector('canvas') : null;
+                                    if (innerCanvas) {
+                                         console.warn("ADMIN WARN: Un canvas a été trouvé dans un élément ajouté (#player-preview-container ou #event-preview-iframe) !", innerCanvas);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+                
+                observer.observe(previewContainer, { childList: true, subtree: true });
+                console.log("ADMIN: MutationObserver is now watching #preview-container");
+            } else {
+                console.error("ADMIN ERROR: Could not find #preview-container to observe.");
+            }
+            
+            // ---------- DOM Elements ----------
+            // Server controls
+            const serverStatus = document.getElementById('server-status');
+            const startServerBtn = document.getElementById('start-server-btn');
+            const stopServerBtn = document.getElementById('stop-server-btn');
+            const openPlayerBtn = document.getElementById('open-player-btn');
+            
+            // TikTok integration
+            const tiktokStatus = document.getElementById('tiktok-status');
+            const connectTiktokBtn = document.getElementById('connect-tiktok-btn');
+            const disconnectTiktokBtn = document.getElementById('disconnect-tiktok-btn');
+            
+            // Donation simulator
+            const donationAmount = document.getElementById('donation-amount');
+            const donationName = document.getElementById('donation-name');
+            const simulateDonationBtn = document.getElementById('simulate-donation-btn');
+            
+            // Scenario control - éléments supprimés pour éviter la confusion avec la trame de métro
+            // const chapterSelector = document.getElementById('chapter-selector');
+            // const prevChapterBtn = document.getElementById('prev-chapter-btn');
+            // const nextChapterBtn = document.getElementById('next-chapter-btn');
+            const syncChaptersBtn = null; // document.getElementById('sync-chapters-btn');
+            
+            // Metro line visualization
+            const metroProgress = document.getElementById('metro-progress');
+            const metroBoat = document.getElementById('metro-boat');
+            const metroStations = document.getElementById('metro-stations');
+            const totalDonationAmount = document.getElementById('total-donation-amount');
+            const donationPercent = document.getElementById('donation-percent');
+            const triggerEventBtn = document.getElementById('trigger-event-btn');
+            const addEventBtn = document.getElementById('add-event-btn');
+            const manageEventsBtn = document.getElementById('manage-events-btn');
+            const resetDonationsBtn = document.getElementById('reset-donations-btn');
+            
+            // Event modal
+            const eventModal = document.getElementById('event-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const closeModalBtn = document.getElementById('close-modal');
+            const eventForm = document.getElementById('event-form');
+            const eventName = document.getElementById('event-name');
+            // eventType supprimé
+            const eventThreshold = document.getElementById('event-threshold');
+            // Éléments pour événement simple supprimés
+            const testEventBtn = document.getElementById('test-event-btn');
+            const saveEventBtn = document.getElementById('save-event-btn');
+            const clearSequenceBtn = document.getElementById('clear-sequence-btn');
+            
+            // Preview iframe
+            const playerPreviewIframe = document.getElementById('player-preview-iframe');
+            
+            // Event log
+            const eventLog = document.getElementById('event-log');
+            
+            // ---------- Global Variables ----------
+            // Constants
+            const GOAL_AMOUNT = 3250; // Goal amount in euros
+            
+            // State
+            let systemState = {
+                serverRunning: false,
+                tiktokConnected: false,
+                currentDonation: 0,
+                currentChapter: 'intro'
+            };
+            
+            // Track game window
+            let gameWindow = null;
+            
+            // Compteur d'ID pour les actions dans les séquences
+            window.actionIdCounter = window.actionIdCounter || 0;
+            
+            // Story data with events and thresholds
+            let storyData = {
+                currentChapter: 'intro',
+                progress: 15,
+                chapters: {},
+                savedEvents: [],
+                thresholds: []
+            };
+            
+            // ==========================================
+            // INITIALISATION ET SETUP
+            // ==========================================
+            
+            // ---------- Initialization ----------
+            async function init() {
+                console.log('Initializing admin interface...');
+                
+                // Initialiser Socket.IO pour TikTok
+                initTiktokSocket();
+                
+                // Charger les données initiales
+                await loadStoryData();
+                
+                // Vérifier si l'authentification est déjà ajoutée comme premier événement
+                let authEventExists = false;
+                if (storyData.thresholds && storyData.thresholds.length > 0) {
+                    authEventExists = storyData.thresholds.some(threshold => {
+                        const event = storyData.savedEvents[threshold.eventIndex];
+                        return event && event.name === "Authentification" && event.type === "chapter";
+                    });
+                }
+                
+                // Si l'événement d'authentification n'existe pas, l'ajouter comme premier événement important
+                if (!authEventExists) {
+                    console.log("Ajout de l'événement d'authentification initial...");
+                    // Ajouter l'événement d'authentification au début
+                    const authIndex = storyData.savedEvents.length;
+                    
+                    // Créer l'événement d'authentification
+                    storyData.savedEvents.push({
+                        name: "Authentification",
+                        type: "chapter",
+                        params: JSON.stringify({
+                            message: "Authentification réussie pour l'exploration des profondeurs",
+                            importance: "critique"
+                        }),
+                        duration: 0 // Permanent
+                    });
+                    
+                    // Ajouter le seuil pour l'événement d'authentification (à 10€ pour qu'il apparaisse au début)
+                    storyData.thresholds.push({
+                        amount: 10,
+                        eventIndex: authIndex,
+                        eventName: "Authentification",
+                        applied: false
+                    });
+                    
+                    // Sauvegarder les modifications
+                    await saveStoryData();
+                    
+                    addLogEntry("Événement d'authentification initial ajouté à la trame", "system");
+                }
+                
+                // Initialiser les visualisations
+                updateMetroVisualization();
+                updateMetroStations();
+                
+                // Mettre à jour l'état initial du serveur
+                checkServerStatus();
+                
+                // Configurer tous les écouteurs d'événements
+                setupEventListeners();
+                
+                // Configurer les contrôles de sauvegarde et de chargement
+                setupSaveLoadControls();
+                
+                // Vérifier l'état du zoom
+                handleWindowResize();
+                
+                // Charger automatiquement la prévisualisation du player sans ouvrir de fenêtre
+                loadPreviewIframe();
+                
+                // Initialiser l'édition de la séquence
+                initSequenceEditing();
+                
+                console.log('Admin interface initialized');
+            }
+            
+            // Fonction pour synchroniser les chapitres avec la trame de métro
+            function syncChaptersToMetroLine() {
+                if (!storyData.chapters) return;
+                
+                // Vérifier si les chapitres sont déjà dans les événements
+                const chaptersInEvents = storyData.savedEvents.some(event => event.type === 'chapter');
+                
+                if (!chaptersInEvents) {
+                    // Calculer la répartition des chapitres sur l'ensemble du parcours
+                    const chaptersList = Object.entries(storyData.chapters);
+                    const totalChapters = chaptersList.length;
+                    
+                    if (totalChapters === 0) return;
+                    
+                    // Convertir chaque chapitre en événement et seuil
+                    chaptersList.forEach(([chapterId, chapter], index) => {
+                        // Calculer le seuil proportionnel à la position du chapitre (sauf intro et finale)
+                        let threshold;
+                        
+                        if (chapterId === 'intro') {
+                            threshold = 0; // Début
+                        } else if (chapterId === 'finale') {
+                            threshold = GOAL_AMOUNT; // Fin
+                        } else {
+                            // Répartition uniforme des autres chapitres
+                            const chapterPosition = index / (totalChapters - 1);
+                            threshold = Math.round(chapterPosition * GOAL_AMOUNT);
+                        }
+                        
+                        // Créer l'événement pour ce chapitre
+                        const eventIndex = storyData.savedEvents.length;
+                        storyData.savedEvents.push({
+                            name: chapter.title,
+                            type: 'chapter',
+                            params: JSON.stringify({
+                                chapterId: chapterId,
+                                description: chapter.description,
+                                title: chapter.title
+                            }),
+                            duration: 0 // Les chapitres sont permanents
+                        });
+                        
+                        // Ajouter le seuil correspondant (sauf pour finale qui est le but final)
+                        if (chapterId !== 'finale') {
+                            storyData.thresholds.push({
+                                amount: threshold,
+                                eventIndex: eventIndex,
+                                eventName: chapter.title,
+                                applied: chapterId === 'intro' ? true : false // Le chapitre intro est déjà appliqué
+                            });
+                        }
+                        
+                        addLogEntry(`Chapitre "${chapter.title}" ajouté à la trame de métro`, 'system');
+                    });
+                    
+                    // Sauvegarder les modifications
+                    saveStoryData();
+                }
+            }
+            
+            // ---------- Zoom Controls ----------
+            let currentZoom = 100; // Pourcentage de zoom actuel
+            const zoomStep = 10; // Pas de zoom en pourcentage
+            const minZoom = 50; // Zoom minimum
+            const maxZoom = 200; // Zoom maximum
+            
+            function setupZoomControls() {
+                const zoomInBtn = document.getElementById('zoom-in-btn');
+                const zoomOutBtn = document.getElementById('zoom-out-btn');
+                const zoomResetBtn = document.getElementById('zoom-reset-btn');
+                const zoomLevelDisplay = document.getElementById('zoom-level');
+                const previewContainer = document.getElementById('player-preview-container');
+                
+                // Zoom in
+                zoomInBtn.addEventListener('click', () => {
+                    if (currentZoom < maxZoom) {
+                        currentZoom += zoomStep;
+                        updateZoom();
+                    }
+                });
+                
+                // Zoom out
+                zoomOutBtn.addEventListener('click', () => {
+                    if (currentZoom > minZoom) {
+                        currentZoom -= zoomStep;
+                        updateZoom();
+                    }
+                });
+                
+                // Reset zoom
+                zoomResetBtn.addEventListener('click', () => {
+                    currentZoom = 100;
+                    updateZoom();
+                });
+                
+                // Zoom avec la molette de la souris
+                const scrollContainer = document.getElementById('preview-scroll-container');
+                scrollContainer.addEventListener('wheel', (e) => {
+                    // Empêcher le défilement par défaut
+                    e.preventDefault();
+                    
+                    // Détecter la direction de la molette
+                    if (e.ctrlKey || e.metaKey) {  // S'assurer que Ctrl est enfoncé (habitude zoom)
+                        if (e.deltaY < 0 && currentZoom < maxZoom) {
+                            // Zoom in (molette vers le haut)
+                            currentZoom = Math.min(maxZoom, currentZoom + zoomStep);
+                            updateZoom();
+                        } else if (e.deltaY > 0 && currentZoom > minZoom) {
+                            // Zoom out (molette vers le bas)
+                            currentZoom = Math.max(minZoom, currentZoom - zoomStep);
+                            updateZoom();
+                        }
+                    }
+                }, { passive: false });
+                
+                function updateZoom() {
+                    // Mettre à jour l'affichage du niveau de zoom
+                    zoomLevelDisplay.textContent = `${currentZoom}%`;
+                    
+                    // Récupérer les éléments nécessaires
+                    const previewContainer = document.getElementById('player-preview-container');
+                    const scale = currentZoom / 100;
+                    
+                    // Appliquer le zoom uniquement via CSS transform pour éviter le rognage
+                    previewContainer.style.transform = `scale(${scale})`;
+                    
+                    // Augmenter la marge autour du conteneur en fonction du zoom
+                    // pour éviter que le contenu ne soit rogné par les bords
+                    const scrollContainer = document.getElementById('preview-scroll-container');
+                    if (scrollContainer) {
+                        // Calculer la nouvelle taille avec le zoom
+                        const scaledWidth = 404 * scale; // Anciennement 338
+                        const scaledHeight = 744 * scale; // Anciennement 600
+                        
+                        // Ajouter du padding autour du conteneur zoomé
+                        const paddingHorizontal = Math.max(0, (scaledWidth - 404) / 2 + 40); // Anciennement 338
+                        const paddingVertical = Math.max(0, (scaledHeight - 744) / 2 + 40); // Anciennement 600
+                        
+                        // Appliquer les paddings pour donner de l'espace
+                        scrollContainer.style.padding = `${paddingVertical}px ${paddingHorizontal}px`;
+                        
+                        // Journaliser les dimensions
+                        console.log(`Zoom: ${currentZoom}%, Container: ${scaledWidth}x${scaledHeight}, Padding: ${paddingHorizontal}px horizontal, ${paddingVertical}px vertical`);
+                    }
+                    
+                    // Optimiser la qualité d'affichage pendant le zoom
+                    previewContainer.style.imageRendering = 'high-quality';
+                    previewContainer.style.backfaceVisibility = 'hidden';
+                }
+            }
+            
+            // ==========================================
+            // MEDIA GALLERY FUNCTIONS
+            // ==========================================
+            
+            // Open Media Gallery
+            function openMediaGallery() {
+                document.getElementById('media-gallery-modal').style.display = 'flex';
+                loadMediaGallery();
+            }
+            
+            // Close Media Gallery
+            function closeMediaGallery() {
+                document.getElementById('media-gallery-modal').style.display = 'none';
+            }
+            
+            // Load Media Gallery
+            function loadMediaGallery() {
+                fetch('/api/media')
+                    .then(response => response.json())
+                    .then(data => {
+                        const galleryContainer = document.getElementById('media-gallery-container');
+                        galleryContainer.innerHTML = '';
+                        
+                        if (data.length === 0) {
+                            galleryContainer.innerHTML = '<p class="no-media">Aucun média disponible. Commencez par en télécharger un.</p>';
+                            return;
+                        }
+                        
+                        data.forEach(item => {
+                            const mediaItem = document.createElement('div');
+                            mediaItem.className = 'media-item';
+                            mediaItem.setAttribute('data-media-id', item.id);
+                            
+                            if (item.type.startsWith('image/')) {
+                                mediaItem.innerHTML = `
+                                    <img src="${item.url}" alt="${item.name}">
+                                    <div class="media-info">
+                                        <span class="media-name">${item.name}</span>
+                                        <button class="delete-media-btn" data-media-id="${item.id}">Supprimer</button>
+                                    </div>
+                                `;
+                            } else if (item.type.startsWith('video/')) {
+                                mediaItem.innerHTML = `
+                                    <video src="${item.url}" controls></video>
+                                    <div class="media-info">
+                                        <span class="media-name">${item.name}</span>
+                                        <button class="delete-media-btn" data-media-id="${item.id}">Supprimer</button>
+                                    </div>
+                                `;
+                            } else if (item.type.startsWith('audio/')) {
+                                mediaItem.innerHTML = `
+                                    <audio src="${item.url}" controls></audio>
+                                    <div class="media-info">
+                                        <span class="media-name">${item.name}</span>
+                                        <button class="delete-media-btn" data-media-id="${item.id}">Supprimer</button>
+                                    </div>
+                                `;
+                            }
+                            
+                            galleryContainer.appendChild(mediaItem);
+                        });
+                        
+                        // Add event listeners for delete buttons
+                        document.querySelectorAll('.delete-media-btn').forEach(button => {
+                            button.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                const mediaId = button.getAttribute('data-media-id');
+                                deleteMedia(mediaId);
+                            });
+                        });
+                        
+                        // Add event listeners for media selection
+                        document.querySelectorAll('.media-item').forEach(item => {
+                            item.addEventListener('click', () => {
+                                const mediaId = item.getAttribute('data-media-id');
+                                const mediaUrl = item.querySelector('img')?.src || 
+                                                item.querySelector('video')?.src || 
+                                                item.querySelector('audio')?.src;
+                                
+                                if (currentMediaSelectionCallback) {
+                                    currentMediaSelectionCallback(mediaId, mediaUrl);
+                                    closeMediaGallery();
+                                }
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors du chargement des médias:', error);
+                        document.getElementById('media-gallery-container').innerHTML = 
+                            '<p class="error">Erreur lors du chargement des médias. Veuillez réessayer.</p>';
+                    });
+            }
+            
+            // Delete Media
+            function deleteMedia(mediaId) {
+                if (confirm('Êtes-vous sûr de vouloir supprimer ce média ? Cette action est irréversible.')) {
+                    fetch(`/api/media/${mediaId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            loadMediaGallery(); // Reload the gallery
+                        } else {
+                            alert('Erreur lors de la suppression du média.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la suppression du média:', error);
+                        alert('Erreur lors de la suppression du média.');
+                    });
+                }
+            }
+            
+            // Upload Media
+            function uploadMedia() {
+                const fileInput = document.getElementById('media-file-input');
+                const file = fileInput.files[0];
+                
+                if (!file) {
+                    alert('Veuillez sélectionner un fichier à télécharger.');
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append('media', file);
+                
+                document.getElementById('upload-status').textContent = 'Téléchargement en cours...';
+                
+                fetch('/api/media/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('upload-status').textContent = 'Téléchargement réussi!';
+                    fileInput.value = '';
+                    loadMediaGallery();
+                })
+                .catch(error => {
+                    console.error('Erreur lors du téléchargement:', error);
+                    document.getElementById('upload-status').textContent = 'Erreur lors du téléchargement.';
+                });
+            }
+            
+            // Global variable to store the callback function for media selection
+            let currentMediaSelectionCallback = null;
+            
+            // Function to open media gallery with a callback for selection
+            function selectMediaFromGallery(callback) {
+                currentMediaSelectionCallback = callback;
+                openMediaGallery();
+            }
+            
+            // ==========================================
+            // EVENT LISTENERS - DOCUMENT READY
+            // ==========================================
+            
+            document.addEventListener('DOMContentLoaded', function () {
+                // ... existing code ...
+                
+                // Initialiser la gestion des séquences d'événements
+                initSequenceEvents();
+                
+                // Mettre à jour les gestionnaires d'événements pour le formulaire
+                eventForm.addEventListener('submit', saveEvent);
+                closeModalBtn.addEventListener('click', closeEventEditor);
+                eventType.addEventListener('change', updateEventForm);
+                testEventBtn.addEventListener('click', testEvent);
+                
+                // Initialiser la prévisualisation
+                initPreviewFrame();
+                
+                // Configurer les boutons de prévisualisation
+                const previewEventBtn = document.getElementById('preview-event-btn');
+                const previewResetBtn = document.getElementById('preview-reset-btn');
+                if (previewEventBtn) previewEventBtn.addEventListener('click', previewCurrentEvent);
+                if (previewResetBtn) previewResetBtn.addEventListener('click', resetPreview);
+                
+                // ... existing code ...
+                
+                // Media Gallery Event Listeners
+                document.getElementById('open-media-gallery-btn').addEventListener('click', openMediaGallery);
+                document.getElementById('upload-new-media-btn-main').addEventListener('click', () => {
+                    document.getElementById('media-file-input').click();
+                });
+                document.getElementById('upload-new-media-btn').addEventListener('click', () => {
+                    document.getElementById('media-file-input').click();
+                });
+                document.getElementById('media-file-input').addEventListener('change', uploadMedia);
+                document.getElementById('close-media-gallery-btn').addEventListener('click', closeMediaGallery);
+                
+                // Add event listeners for existing browse media buttons
+                document.querySelectorAll('.browse-media-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const mediaInputField = event.target.closest('.form-group').querySelector('.media-url-input');
+                        selectMediaFromGallery((mediaId, mediaUrl) => {
+                            mediaInputField.value = mediaUrl;
+                        });
+                    });
+                });
+                
+                // ... existing code ...
+            });
+            
+            // ==========================================
+            // SOCKET IO SETUP
+            // ==========================================
+            
+            // ---------- Server Control Functions ----------
+            async function checkServerStatus() {
+                try {
+                    const response = await fetch('/api/status');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        updateServerStatus(data.running, data.tiktokConnected);
+                    }
+                } catch (error) {
+                    console.error('Error checking server status:', error);
+                    // If we can't reach the server, assume it's not running
+                    updateServerStatus(false, false);
+                }
+            }
+            
+            function updateServerStatus(serverRunning, tiktokConnected) {
+                systemState.serverRunning = serverRunning;
+                systemState.tiktokConnected = tiktokConnected;
+                
+                // Update UI
+                serverStatus.textContent = serverRunning ? 'EN COURS' : 'ARRÊTÉ';
+                serverStatus.className = `status ${serverRunning ? 'active' : 'inactive'}`;
+                
+                startServerBtn.disabled = serverRunning;
+                stopServerBtn.disabled = !serverRunning;
+                
+                tiktokStatus.textContent = tiktokConnected ? 'CONNECTÉ' : 'DÉCONNECTÉ';
+                tiktokStatus.className = `status ${tiktokConnected ? 'active' : 'inactive'}`;
+                
+                connectTiktokBtn.disabled = tiktokConnected || !serverRunning;
+                disconnectTiktokBtn.disabled = !tiktokConnected || !serverRunning;
+            }
+            
+            async function startServer() {
+                try {
+                    addLogEntry('Starting server...', 'system');
+                    
+                    const response = await fetch('/api/start', {
+                        method: 'POST'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        addLogEntry('Server started successfully', 'system');
+                        updateServerStatus(true, false);
+                        
+                        // Automatically open player view when server starts
+                        openPlayerView();
+                    } else {
+                        addLogEntry(`Failed to start server: ${data.error}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error starting server:', error);
+                    addLogEntry('Error starting server', 'error');
+                }
+            }
+            
+            async function stopServer() {
+                try {
+                    addLogEntry('Stopping server...', 'system');
+                    
+                    const response = await fetch('/api/stop', {
+                        method: 'POST'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        addLogEntry('Server stopped successfully', 'system');
+                        updateServerStatus(false, false);
+                    } else {
+                        addLogEntry(`Failed to stop server: ${data.error}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error stopping server:', error);
+                    addLogEntry('Error stopping server', 'error');
+                }
+            }
+            
+            function openPlayerView() {
+                if (gameWindow && !gameWindow.closed) {
+                    gameWindow.focus();
+                } else {
+                    gameWindow = window.open('/sethos_ai.html', 'player_view', 'width=400,height=800');
+                }
+                
+                // Charge également le contenu dans l'iframe de prévisualisation
+                loadPreviewIframe();
+                
+                addLogEntry('Player view opened', 'system');
+            }
+            
+            // Fonction pour charger uniquement le contenu dans l'iframe sans ouvrir de fenêtre
+            function loadPreviewIframe() {
+                // Update preview iframe with TikTok aspect ratio
+                playerPreviewIframe.src = '/sethos_ai.html';
+                
+                // Inject CSS after iframe loads to ensure correct 9:16 ratio display
+                playerPreviewIframe.onload = function() {
+                    try {
+                        const iframeDoc = playerPreviewIframe.contentDocument || playerPreviewIframe.contentWindow.document;
+                        
+                        // First, create a link to our TikTok preview CSS
+                        const head = iframeDoc.head;
+                        const tikTokCssLink = document.createElement('link');
+                        tikTokCssLink.rel = 'stylesheet';
+                        tikTokCssLink.href = 'tiktok_preview.css';
+                        tikTokCssLink.id = 'tiktok-preview-css';
+                        head.appendChild(tikTokCssLink);
+                        
+                        // Inject additional CSS to ensure proper scaling and prevent cropping
+                        const customCSS = document.createElement('style');
+                        customCSS.textContent = `
+                            /* Styles de base */
+                            html, body {
+                                width: 100% !important;
+                                height: 100% !important;
+                                overflow: hidden !important;
+                                margin: 0 !important;
+                                padding: 0 !important;
+                                display: flex !important;
+                                justify-content: center !important;
+                                align-items: center !important;
+                                background-color: #000 !important;
+                            }
+                            
+                            canvas, video, img {
+                                position: absolute !important;
+                                top: 50% !important;
+                                left: 50% !important;
+                                transform: translate(-50%, -50%) !important;
+                                object-fit: contain !important;
+                                max-width: 100% !important;
+                                max-height: 100% !important;
+                            }
+                            
+                            /* Container TikTok principal avec ratio 9:16 */
+                            .tiktok-container {
+                                position: relative !important;
+                                width: 100% !important;
+                                height: 100% !important;
+                                display: flex !important;
+                                justify-content: center !important;
+                                align-items: center !important;
+                                background-color: #000 !important;
+                            }
+                            
+                            /* Frame interne avec aspect-ratio fixe */
+                            .tiktok-frame {
+                                position: relative !important;
+                                aspect-ratio: 9/16 !important;
+                                width: auto !important;
+                                height: 100% !important;
+                                max-height: 100% !important;
+                                max-width: 100% !important;
+                                overflow: hidden !important;
+                                background-color: #000 !important;
+                                display: flex !important;
+                                justify-content: center !important;
+                                align-items: center !important;
+                            }
+                            
+                            /* Adaptation aux différentes tailles d'écran */
+                            @media (max-width: 450px) {
+                                .tiktok-frame {
+                                    width: 100% !important;
+                                    height: auto !important;
+                                }
+                            }
+                        `;
+                        head.appendChild(customCSS);
+                        
+                        // Éviter de créer des conteneurs imbriqués
+                        const existingContainer = iframeDoc.querySelector('.tiktok-container');
+                        if (existingContainer) {
+                            return;
+                        }
+                        
+                        // Extraire le contenu de l'iframe
+                        const bodyContent = iframeDoc.body.innerHTML;
+                        
+                        // Créer la structure TikTok
+                        iframeDoc.body.innerHTML = `
+                            <div class="tiktok-container">
+                                <div class="tiktok-frame">
+                                    ${bodyContent}
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Appliquer des styles spécifiques au canvas
+                        setTimeout(() => {
+                            const canvas = iframeDoc.querySelector('canvas');
+                            if (canvas) {
+                                canvas.style.position = 'absolute';
+                                canvas.style.top = '50%';
+                                canvas.style.left = '50%';
+                                canvas.style.transform = 'translate(-50%, -50%)';
+                                canvas.style.maxWidth = '100%';
+                                canvas.style.maxHeight = '100%';
+                                canvas.style.objectFit = 'contain';
+                                canvas.style.margin = '0 auto';
+                            }
+                            
+                            // Calculer et appliquer le zoom optimal
+                            const optimalZoom = calculateOptimalZoom();
+                            currentZoom = optimalZoom;
+                            updateZoom();
+                            
+                            addLogEntry('Prévisualisation TikTok chargée correctement', 'system');
+                        }, 300);
+                        
+                    } catch (e) {
+                        console.error('Error formatting iframe content:', e);
+                        addLogEntry('Erreur lors du formatage de la prévisualisation', 'error');
+                    }
+                };
+            }
+            
+            // Calculer le zoom optimal pour remplir l'écran
+            function calculateOptimalZoom() {
+                // Récupérer les éléments nécessaires
+                const previewContainer = document.getElementById('preview-container');
+                const scrollContainer = document.getElementById('preview-scroll-container');
+                const playerContainer = document.getElementById('player-preview-container');
+                
+                if (!previewContainer || !scrollContainer || !playerContainer) {
+                    console.error('Elements needed for optimal zoom calculation not found');
+                    return 100; // Zoom par défaut
+                }
+                
+                // Obtenir les dimensions du conteneur de prévisualisation
+                const containerWidth = scrollContainer.clientWidth;
+                const containerHeight = scrollContainer.clientHeight;
+                
+                console.log(`Container dimensions: ${containerWidth}x${containerHeight}`);
+                
+                // Dimensions de base du joueur
+                const playerWidth = 404; // Largeur fixe pour le ratio 9:16 (anciennement 338)
+                const playerHeight = 744; // Hauteur fixe (anciennement 600)
+                
+                // Calculer les ratios d'échelle possibles
+                const widthRatio = (containerWidth / playerWidth) * 0.95;  // 95% de la largeur disponible
+                const heightRatio = (containerHeight / playerHeight) * 0.95; // 95% de la hauteur disponible
+                
+                console.log(`Width ratio: ${widthRatio}, Height ratio: ${heightRatio}`);
+                
+                // Prendre le plus petit pour s'assurer que tout est visible
+                let ratio = Math.min(widthRatio, heightRatio);
+                
+                // Limiter le zoom entre 50% et 100%
+                ratio = Math.max(0.5, Math.min(1.0, ratio));
+                
+                // Convertir en pourcentage
+                const zoomPercentage = Math.floor(ratio * 100);
+                
+                console.log(`Calculated optimal zoom: ${zoomPercentage}%`);
+                
+                return zoomPercentage;
+            }
+            
+            // Fonction pour redimensionner automatiquement la prévisualisation quand la fenêtre change
+            function handleWindowResize() {
+                // Mise à jour du zoom optimal
+                if (typeof calculateOptimalZoom === 'function') {
+                    const optimalZoom = calculateOptimalZoom();
+                    if (optimalZoom !== currentZoom) {
+                        currentZoom = optimalZoom;
+                        updateZoom();
+                    }
+                }
+            }
+            
+            // Ajouter un écouteur de redimensionnement de fenêtre
+            window.addEventListener('resize', function() {
+                // Utiliser un délai pour éviter trop d'appels
+                clearTimeout(window.resizeTimer);
+                window.resizeTimer = setTimeout(handleWindowResize, 250);
+            });
+            
+            // ---------- TikTok Integration Functions ----------
+            let tiktokSocket = null;
+            let tiktokConnected = false;
+            let tiktokUsername = '';
+            
+            const tiktokUsernameInput = document.getElementById('tiktok-username');
+            const tiktokStats = document.getElementById('tiktok-stats');
+            const tiktokViewers = document.getElementById('tiktok-viewers');
+            const tiktokComments = document.getElementById('tiktok-comments');
+            const tiktokLikes = document.getElementById('tiktok-likes');
+            const tiktokGifts = document.getElementById('tiktok-gifts');
+            
+            // Initialiser Socket.IO pour TikTok
+            function initTiktokSocket() {
+                if (tiktokSocket) return; // Déjà initialisé
+                
+                try {
+                    // Se connecter au serveur TikTok
+                    tiktokSocket = io('http://localhost:8092');
+                    
+                    // Événement de connexion
+                    tiktokSocket.on('connect', () => {
+                        console.log('Connected to TikTok server');
+                        addLogEvent('Connecté au serveur TikTok', 'info');
+                    });
+                    
+                    // Événement de déconnexion
+                    tiktokSocket.on('disconnect', () => {
+                        console.log('Disconnected from TikTok server');
+                        addLogEvent('Déconnecté du serveur TikTok', 'warning');
+                        updateTiktokStatus(false, '');
+                    });
+                    
+                    // Événement d'erreur
+                    tiktokSocket.on('error', (error) => {
+                        console.error('TikTok socket error:', error);
+                        addLogEvent(`Erreur TikTok: ${error.message || 'Erreur inconnue'}`, 'error');
+                    });
+                    
+                    // Événement de statut TikTok
+                    tiktokSocket.on('tiktokStatus', (data) => {
+                        console.log('TikTok status update:', data);
+                        updateTiktokStatus(data.isConnected, data.username);
+                        
+                        if (data.viewerCount !== undefined) {
+                            tiktokViewers.textContent = data.viewerCount;
+                        }
+                    });
+                    
+                    // Événements TikTok (chat, dons, etc.)
+                    tiktokSocket.on('tiktokEvent', (event) => {
+                        console.log('TikTok event:', event);
+                        
+                        switch (event.type) {
+                            case 'chat':
+                                addLogEvent(`TikTok ${event.username}: ${event.message}`, 'chat');
+                                tiktokComments.textContent = parseInt(tiktokComments.textContent || '0') + 1;
+                                break;
+                                
+                            case 'gift':
+                                addLogEvent(`TikTok ${event.username} a envoyé ${event.giftName} (${event.euroValue}€)`, 'gift');
+                                tiktokGifts.textContent = parseInt(tiktokGifts.textContent || '0') + 1;
+                                // Envoyer le don à Sethos_ai.html
+                                sendDonationToGame(event.username, event.euroValue, event.giftName);
+                                break;
+                                
+                            case 'like':
+                                tiktokLikes.textContent = parseInt(tiktokLikes.textContent || '0') + (event.likeCount || 1);
+                                break;
+                                
+                            case 'viewerCount':
+                                tiktokViewers.textContent = event.count;
+                                break;
+                                
+                            case 'follow':
+                                addLogEvent(`TikTok ${event.username} a commencé à suivre`, 'follow');
+                                break;
+                                
+                            case 'share':
+                                addLogEvent(`TikTok ${event.username} a partagé le live`, 'share');
+                                break;
+                                
+                            case 'subscribe':
+                                addLogEvent(`TikTok ${event.username} s'est abonné`, 'subscribe');
+                                // Envoyer un don "abonnement" à Sethos_ai.html
+                                sendDonationToGame(event.username, 4.99, 'Abonnement');
+                                break;
+                        }
+                    });
+                    
+                } catch (error) {
+                    console.error('Failed to initialize TikTok socket:', error);
+                    addLogEvent('Erreur lors de l\'initialisation du socket TikTok', 'error');
+                }
+            }
+            
+            // Mettre à jour l'affichage du statut TikTok
+            function updateTiktokStatus(isConnected, username) {
+                tiktokConnected = isConnected;
+                tiktokUsername = username;
+                
+                tiktokStatus.textContent = isConnected ? 'CONNECTÉ' : 'DÉCONNECTÉ';
+                tiktokStatus.className = `status ${isConnected ? 'active' : 'inactive'}`;
+                
+                connectTiktokBtn.disabled = isConnected;
+                disconnectTiktokBtn.disabled = !isConnected;
+                
+                if (isConnected) {
+                    tiktokUsernameInput.value = username;
+                    tiktokStats.style.display = 'block';
+                    addLogEvent(`Connecté au live TikTok de ${username}`, 'info');
+                } else {
+                    tiktokStats.style.display = 'none';
+                    if (tiktokUsername) {
+                        addLogEvent(`Déconnecté du live TikTok de ${tiktokUsername}`, 'info');
+                    }
+                }
+            }
+            
+            // Connecter à un live TikTok
+            async function connectToTikTok() {
+                try {
+                    // Récupérer le nom d'utilisateur
+                    let username = tiktokUsernameInput.value.trim();
+                    
+                    // Vérifier qu'un nom d'utilisateur a été fourni
+                    if (!username) {
+                        alert('Veuillez entrer un nom d\'utilisateur TikTok');
+                        return;
+                    }
+                    
+                    // Ajouter @ si nécessaire
+                    if (!username.startsWith('@')) {
+                        username = '@' + username;
+                    }
+                    
+                    // Initialiser le socket si nécessaire
+                    initTiktokSocket();
+                    
+                    // Envoyer la requête de connexion
+                    const response = await fetch('http://localhost:8092/connect', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        updateTiktokStatus(true, username);
+                    } else {
+                        alert(`Erreur lors de la connexion: ${data.message}`);
+                        addLogEvent(`Erreur de connexion TikTok: ${data.message}`, 'error');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error connecting to TikTok:', error);
+                    alert('Erreur lors de la connexion TikTok. Vérifiez que le serveur est lancé.');
+                    addLogEvent('Erreur lors de la connexion TikTok', 'error');
+                }
+            }
+            
+            // Déconnecter du live TikTok
+            async function disconnectFromTikTok() {
+                try {
+                    if (!tiktokConnected) return;
+                    
+                    const response = await fetch('http://localhost:8092/disconnect', {
+                        method: 'POST'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        updateTiktokStatus(false, '');
+                    } else {
+                        alert(`Erreur lors de la déconnexion: ${data.message}`);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error disconnecting from TikTok:', error);
+                    alert('Erreur lors de la déconnexion TikTok');
+                    addLogEvent('Erreur lors de la déconnexion TikTok', 'error');
+                }
+            }
+            
+            // Envoyer un don à la page du jeu
+            function sendDonationToGame(username, amount, giftName) {
+                try {
+                    // Trouver l'iframe du jeu
+                    const gameIframe = document.getElementById('player-preview-iframe');
+                    if (gameIframe && gameIframe.contentWindow) {
+                        // Envoyer un message au jeu
+                        gameIframe.contentWindow.postMessage({
+                            type: 'donation',
+                            username,
+                            amount,
+                            message: `Don TikTok: ${giftName}`
+                        }, '*');
+                        
+                        addLogEvent(`Don envoyé au jeu: ${username} - ${amount}€ (${giftName})`, 'info');
+                    }
+                } catch (error) {
+                    console.error('Error sending donation to game:', error);
+                }
+            }
+            
+            // ---------- Donation Functions ----------
+            async function simulateDonation() {
+                const amount = parseInt(donationAmount.value);
+                const name = donationName.value.trim() || 'Anonymous';
+                
+                if (isNaN(amount) || amount <= 0) {
+                    addLogEntry('Invalid donation amount', 'error');
+                    return;
+                }
+                
+                try {
+                    // Créer socket.io central si pas déjà fait
+                    if (!window.centralSocket) {
+                        try {
+                            window.centralSocket = io();
+                            console.log('Socket central créé pour donation');
+                            
+                            window.centralSocket.on('connect', () => {
+                                // S'identifier comme client administrateur
+                                window.centralSocket.emit('register_client', { type: 'admin' });
+                                console.log('Socket enregistré comme admin');
+                            });
+                            
+                            // Écouter les mises à jour d'état du système
+                            window.centralSocket.on('system_state', (data) => {
+                                console.log('📊 System state received:', data);
+                                
+                                // Mettre à jour l'interface avec les données du système
+                                if (data.donations && data.donations.total) {
+                                    systemState.currentDonation = data.donations.total;
+                                    updateMetroVisualization();
+                                }
+                                
+                                // Mettre à jour les seuils si disponibles
+                                if (data.thresholds) {
+                                    // Appeler updateMetroVisualization pour mettre à jour le métro
+                                    updateMetroVisualization();
+                                    
+                                    // Appeler updateEventDetails pour mettre à jour la liste détaillée
+                                    updateEventDetails();
+                                    
+                                    console.log('Mise à jour complète du métro et de la liste avec les seuils');
+                                }
+                            });
+                        } catch (e) {
+                            console.error('Erreur creation socket central:', e);
+                        }
+                    }
+                    
+                    // Si nous avons une connexion socket.io, utiliser cette méthode (préférable)
+                    if (window.centralSocket && window.centralSocket.connected) {
+                        window.centralSocket.emit('simulateDonation', {
+                            username: name,
+                            amount: amount,
+                            message: ''
+                        });
+                        
+                        addLogEntry(`Donation sent via socket: ${amount}€ from ${name}`, 'donation');
+                        return;
+                    }
+                    
+                    // Sinon, utiliser l'API REST comme fallback
+                    const response = await fetch('/api/donate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            amount: amount,
+                            donor: name
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        addLogEntry(`Simulated donation: ${amount}€ from ${name}`, 'donation');
+                        systemState.currentDonation += amount;
+                        updateMetroVisualization();
+                        checkThresholds(systemState.currentDonation);
+                    } else {
+                        addLogEntry(`Failed to simulate donation: ${data.error}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error simulating donation:', error);
+                    addLogEntry('Error simulating donation', 'error');
+                }
+            }
+            
+            async function resetDonations() {
+                if (!confirm('Êtes-vous sûr de vouloir réinitialiser toutes les donations?')) {
+                    return;
+                }
+                
+                try {
+                    addLogEntry('Resetting donations...', 'system');
+                    
+                    const response = await fetch('/api/reset', {
+                        method: 'POST'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        addLogEntry('Donations reset successfully', 'system');
+                        systemState.currentDonation = 0;
+                        
+                        // Reset all thresholds
+                        if (storyData.thresholds && storyData.thresholds.length > 0) {
+                            storyData.thresholds.forEach(threshold => {
+                                threshold.applied = false;
+                            });
+                        }
+                        
+                        // Update UI
+                        updateMetroVisualization();
+                        updateMetroStations();
+                        saveStoryData();
+                    } else {
+                        addLogEntry(`Failed to reset donations: ${data.error}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error resetting donations:', error);
+                    addLogEntry('Error resetting donations', 'error');
+                }
+            }
+            
+            // ---------- Story Data Functions ----------
+            async function loadStoryData() {
+                try {
+                    console.log("⏳ Chargement des données d'histoire...");
+                    
+                    // Chargement des événements prédéfinis depuis event.json
+                    try {
+                        const eventsResponse = await fetch('/api/events');
+                        const eventsData = await eventsResponse.json();
+                        
+                        if (eventsData.success && eventsData.events && eventsData.events.length > 0) {
+                            console.log(`✅ ${eventsData.events.length} événements prédéfinis chargés`);
+                            
+                            // Initialiser storyData si nécessaire
+                            if (!storyData) {
+                                storyData = {};
+                            }
+                            
+                            // Stocker les événements prédéfinis
+                            storyData.savedEvents = eventsData.events;
+                            
+                            // Générer des seuils si non existants
+                            if (!storyData.thresholds || storyData.thresholds.length === 0) {
+                                console.log("📊 Génération automatique des seuils...");
+                                storyData.thresholds = [];
+                                
+                                // Définir les seuils importants
+                                // Premier événement à 10€, dernier à GOAL_AMOUNT, et répartir les autres entre les deux
+                                const firstAmount = 10; // Montant du premier seuil
+                                const eventCount = eventsData.events.length;
+                                
+                                eventsData.events.forEach((event, index) => {
+                                    let amount;
+                                    if (index === 0) {
+                                        amount = firstAmount;
+                                    } else if (index === eventCount - 1) {
+                                        amount = GOAL_AMOUNT;
+                                    } else {
+                                        // Calcul proportionnel entre le premier et le dernier seuil
+                                        const ratio = index / (eventCount - 1);
+                                        amount = Math.round(firstAmount + ratio * (GOAL_AMOUNT - firstAmount));
+                                    }
+                                    
+                                    storyData.thresholds.push({
+                                        eventIndex: index,
+                                        amount: amount,
+                                        applied: false
+                                    });
+                                    
+                                    console.log(`Seuil ${index+1}: ${amount}€ pour "${event.name}"`);
+                                });
+                                
+                                console.log(`✅ ${storyData.thresholds.length} seuils générés automatiquement`);
+                                
+                                // Sauvegarder immédiatement les données
+                                saveStoryData();
+                            }
+                            
+                            // Mettre à jour l'interface
+                            updateMetroStations();
+                            updateMetroVisualization();
+                            updateEventDetails();
+                        }
+                    } catch (eventsError) {
+                        console.error("❌ Erreur lors du chargement des événements:", eventsError);
+                    }
+                    
+                    // Chargement des données d'histoire depuis l'API principale
+                    fetch('/api/story/load')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Fusionner avec les données existantes
+                                if (!storyData) {
+                                    storyData = data.storyData;
+                                } else if (data.storyData) {
+                                    // Préserver les événements déjà chargés
+                                    const savedEvents = storyData.savedEvents;
+                                    
+                                    // Mise à jour avec les nouvelles données
+                                    Object.assign(storyData, data.storyData);
+                                    
+                                    // Restaurer les événements si les nouvelles données n'en ont pas
+                                    if (savedEvents && (!storyData.savedEvents || storyData.savedEvents.length === 0)) {
+                                        storyData.savedEvents = savedEvents;
+                                    }
+                                }
+                                
+                                // Mettre à jour le chapitre actuel
+                                if (data.storyData && data.storyData.currentChapter !== undefined) {
+                                    systemState.currentChapter = data.storyData.currentChapter;
+                                }
+                                
+                                console.log("✅ Données d'histoire chargées avec succès");
+                                console.log(`📊 ${storyData.savedEvents ? storyData.savedEvents.length : 0} événements, ${storyData.thresholds ? storyData.thresholds.length : 0} seuils`);
+                                
+                                // Mettre à jour l'interface
+                                updateMetroStations();
+                                updateMetroVisualization();
+                                updateEventDetails();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading story data:', error);
+                            addLogEntry('Error loading story data', 'error');
+                        });
+                } catch (error) {
+                    console.error('Error loading story data:', error);
+                    addLogEntry('Error loading story data', 'error');
+                }
+            }
+            
+            async function saveStoryData() {
+                try {
+                    const response = await fetch('/api/story/save', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            storyData: storyData
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!data.success) {
+                        addLogEntry('Failed to save story data', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error saving story data:', error);
+                    addLogEntry('Error saving story data', 'error');
+                }
+            }
+            
+            async function changeChapter(chapterId) {
+                if (!storyData.chapters[chapterId]) {
+                    addLogEntry(`Invalid chapter: ${chapterId}`, 'error');
+                    return;
+                }
+                
+                try {
+                    storyData.currentChapter = chapterId;
+                    systemState.currentChapter = chapterId;
+                    chapterSelector.value = chapterId;
+                    
+                    // Mettre à jour les seuils de chapitre associés dans la trame
+                    const chaptersInOrder = Object.keys(storyData.chapters);
+                    const currentChapterIndex = chaptersInOrder.indexOf(chapterId);
+                    
+                    // Marquer comme appliqués tous les chapitres jusqu'au chapitre courant
+                    storyData.thresholds.forEach(threshold => {
+                        const event = storyData.savedEvents[threshold.eventIndex];
+                        if (event && event.type === 'chapter') {
+                            try {
+                                const params = JSON.parse(event.params);
+                                if (params.chapterId) {
+                                    const eventChapterIndex = chaptersInOrder.indexOf(params.chapterId);
+                                    if (eventChapterIndex >= 0 && eventChapterIndex <= currentChapterIndex) {
+                                        threshold.applied = true;
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('Error parsing chapter event params:', e);
+                            }
+                        }
+                    });
+                    
+                    // Save the current chapter
+                    await saveStoryData();
+                    
+                    // Mettre à jour l'affichage
+                    updateMetroVisualization();
+                    updateMetroStations();
+                    
+                    // Send update to game
+                    await sendStoryUpdate({
+                        action: 'changeChapter',
+                        chapterId: chapterId
+                    });
+                    
+                    addLogEntry(`Changed to chapter: ${storyData.chapters[chapterId].title}`, 'story');
+                } catch (error) {
+                    console.error('Error changing chapter:', error);
+                    addLogEntry('Error changing chapter', 'error');
+                }
+            }
+            
+            async function sendStoryUpdate(updateData) {
+                console.log('🔵 NEW_ADMIN - Envoi événement scénarisé:', JSON.stringify(updateData));
+                try {
+                    const response = await fetch('/api/story/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updateData)
+                    });
+                    
+                    const data = await response.json();
+                    console.log('🔵 NEW_ADMIN - Réponse du serveur événement:', data);
+                    
+                    if (!data.success) {
+                        addLogEntry(`Failed to send story update: ${data.error}`, 'error');
+                    } else {
+                        addLogEntry(`Événement envoyé avec succès: ${updateData.action}`, 'info');
+                    }
+                } catch (error) {
+                    console.error('Error sending story update:', error);
+                    addLogEntry('Error sending story update', 'error');
+                }
+            }
+            
+            // ---------- Metro Line Visualization Functions ----------
+            async function loadDonationData() {
+                try {
+                    const response = await fetch('/api/shared-data/auth-progress');
+                    const data = await response.json();
+                    
+                    if (data.success && data.hasData) {
+                        systemState.currentDonation = data.data.totalProgress || 0;
+                        updateMetroVisualization();
+                    }
+                } catch (error) {
+                    console.error('Error loading donation data:', error);
+                }
+            }
+            
+            function updateMetroVisualization() {
+                const progressPercentage = Math.min(100, (systemState.currentDonation / GOAL_AMOUNT) * 100);
+                
+                // Update progress bar and boat position
+                metroProgress.style.width = `${progressPercentage}%`;
+                metroBoat.style.left = `${progressPercentage}%`;
+                
+                // Update text displays
+                totalDonationAmount.textContent = systemState.currentDonation;
+                donationPercent.textContent = progressPercentage.toFixed(1);
+                
+                // Update trigger event button state
+                const nextEvent = findNextEvent();
+                if (nextEvent) {
+                    triggerEventBtn.textContent = `🎬 Déclencher: ${nextEvent.eventName} (${nextEvent.amount}€)`;
+                    triggerEventBtn.disabled = false;
+                } else {
+                    triggerEventBtn.textContent = "🎬 Aucun événement disponible";
+                    triggerEventBtn.disabled = true;
+                }
+            }
+            
+            function updateMetroStations() {
+                // Start with the fixed stations (start and end)
+                let stationsHtml = `
+                    <div class="metro-station bottom" style="left: 0%;">
+                        <div class="station-marker chapter">C</div>
+                        <div class="station-label">Départ<br>0€</div>
+                    </div>
+                    <div class="metro-station top" style="left: 100%;">
+                        <div class="station-marker chapter">C</div>
+                        <div class="station-label">Final<br>${GOAL_AMOUNT}€</div>
+                    </div>
+                `;
+                
+                // Compteurs pour chaque type de station
+                const counters = {
+                    event: 1,
+                    chapter: 1,
+                    vote: 1,
+                    entity: 1
+                };
+                
+                // Add stations for each threshold
+                if (storyData.thresholds && storyData.thresholds.length > 0) {
+                    const sortedThresholds = [...storyData.thresholds].sort((a, b) => a.amount - b.amount);
+                    
+                    sortedThresholds.forEach((threshold, index) => {
+                        const position = (threshold.amount / GOAL_AMOUNT) * 100;
+                        const event = storyData.savedEvents[threshold.eventIndex];
+                        const stationClass = threshold.applied ? 'active' : 'next';
+                        // Alternate stations between top and bottom
+                        const positionClass = index % 2 === 0 ? 'bottom' : 'top';
+                        
+                        // Déterminer le type de station en fonction du type d'événement
+                        let stationType = 'event'; // Type par défaut
+                        let stationCode = 'E';
+                        
+                        if (event) {
+                            if (event.type === 'chapter') {
+                                stationType = 'chapter';
+                                stationCode = 'C';
+                            } else if (event.type === 'vote') {
+                                stationType = 'vote';
+                                stationCode = 'V';
+                            } else if (event.type === 'entity') {
+                                stationType = 'entity';
+                                stationCode = 'N'; // N pour eNtité pour éviter la confusion avec E (événement)
+                            }
+                            
+                            // Ajouter le numéro séquentiel pour ce type
+                            const stationNumber = counters[stationType]++;
+                            stationCode = `${stationCode}${stationNumber}`;
+                            
+                            // Créer le HTML détaillé pour l'info-bulle (tooltip)
+                            const tooltipHtml = `
+                                <div class="station-tooltip" id="tooltip-${threshold.amount}">
+                                    <h4>${event.name}</h4>
+                                    <p>Code: <span class="tooltip-value">${stationCode}</span></p>
+                                    <p>Type: <span class="tooltip-value">${event.type}</span></p>
+                                    <p>Seuil: <span class="tooltip-value">${threshold.amount}€</span></p>
+                                    <p>Durée: <span class="tooltip-value">${event.duration || 0}s</span></p>
+                                    <p>Statut: <span class="tooltip-value">${threshold.applied ? 'Activé' : 'En attente'}</span></p>
+                                    <p><small>Cliquez pour modifier</small></p>
+                                </div>
+                            `;
+                            
+                            stationsHtml += `
+                                <div class="metro-station ${positionClass}" style="left: ${position}%;" 
+                                    data-threshold="${threshold.amount}" 
+                                    data-event-index="${threshold.eventIndex}"
+                                    data-type="${stationType}"
+                                    data-code="${stationCode}"
+                                    data-event-name="${event.name}">
+                                    <div class="station-marker ${stationType} ${stationClass}">${stationCode}</div>
+                                    <div class="station-label">${threshold.amount}€<br>${event.name}</div>
+                                    ${tooltipHtml}
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                
+                // Update the stations
+                metroStations.innerHTML = stationsHtml;
+                
+                // Add event listeners for stations
+                const stations = metroStations.querySelectorAll('.metro-station');
+            }
+            
+            // ---------- Event Functions ----------
+            function findNextEvent() {
+                if (!storyData.thresholds || storyData.thresholds.length === 0) {
+                    return null;
+                }
+                
+                const sortedThresholds = [...storyData.thresholds].sort((a, b) => a.amount - b.amount);
+                
+                for (const threshold of sortedThresholds) {
+                    if (!threshold.applied && threshold.amount > systemState.currentDonation) {
+                        const event = storyData.savedEvents[threshold.eventIndex];
+                        if (event) {
+                            return {
+                                eventName: event.name,
+                                amount: threshold.amount
+                            };
+                        }
+                    }
+                }
+                
+                return null;
+            }
+            
+            async function triggerNextEvent() {
+                const nextEvent = findNextEvent();
+                if (!nextEvent) {
+                    addLogEntry('No events available to trigger', 'info');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/story/trigger', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            eventName: nextEvent.eventName
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        addLogEntry(`Triggered event: ${nextEvent.eventName}`, 'story');
+                        updateMetroVisualization();
+                        updateMetroStations();
+                    } else {
+                        addLogEntry(`Failed to trigger event: ${data.error}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error triggering event:', error);
+                    addLogEntry('Error triggering event', 'error');
+                }
+            }
+            
+            // ---------- Event Details Functions ----------
+            function updateEventDetails() {
+                let html = '';
+                
+                if (storyData.savedEvents && storyData.savedEvents.length > 0) {
+                    storyData.savedEvents.forEach((event, index) => {
+                        const threshold = storyData.thresholds.find(t => t.eventIndex === index);
+                        const applied = threshold ? threshold.applied : false;
+                        const amount = threshold ? threshold.amount : 'N/A';
+                        
+                        html += `
+                            <div class="event-item ${applied ? 'applied' : ''}" data-event-index="${index}">
+                                <div class="event-header">
+                                    <span class="event-name">${event.name}</span>
+                                    <span class="event-type">${event.type}</span>
+                                    <span class="event-amount">${amount}€</span>
+                                </div>
+                                <div class="event-details">
+                                    <p>Durée: ${event.duration || 0}s</p>
+                                    <p>Paramètres: ${event.params}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html = '<p>Aucun événement disponible.</p>';
+                }
+                
+                eventDetailsContainer.innerHTML = html;
+            }
+            
+            // ---------- Sequence Editor Functions ----------
+            function createQuickAction(actionType, actionName, actionParams) {
+                const actionItem = document.createElement('div');
+                actionItem.className = 'action-item';
+                actionItem.dataset.type = actionType;
+                actionItem.dataset.name = actionName;
+                actionItem.dataset.params = actionParams;
+                
+                const actionNameSpan = document.createElement('span');
+                actionNameSpan.className = 'action-name';
+                actionNameSpan.textContent = actionName;
+                
+                const actionTypeSpan = document.createElement('span');
+                actionTypeSpan.className = 'action-type';
+                actionTypeSpan.textContent = actionType;
+                
+                const actionParamsSpan = document.createElement('span');
+                actionParamsSpan.className = 'action-params';
+                actionParamsSpan.textContent = actionParams;
+                
+                const actionButtons = document.createElement('div');
+                actionButtons.className = 'action-buttons';
+                
+                const editButton = document.createElement('button');
+                editButton.className = 'edit-button';
+                editButton.textContent = 'Modifier';
+                editButton.addEventListener('click', () => editAction(actionItem));
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-button';
+                deleteButton.textContent = 'Supprimer';
+                deleteButton.addEventListener('click', () => deleteAction(actionItem));
+                
+                actionButtons.appendChild(editButton);
+                actionButtons.appendChild(deleteButton);
+                
+                actionItem.appendChild(actionNameSpan);
+                actionItem.appendChild(actionTypeSpan);
+                actionItem.appendChild(actionParamsSpan);
+                actionItem.appendChild(actionButtons);
+                
+                return actionItem;
+            }
+            
+            function initSequenceEditing() {
+                // ... (rest of the code remains unchanged)
+            }
+            
+            // ---------- Log Functions ----------
+            function addLogEntry(message, type) {
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${type}`;
+                logEntry.textContent = message;
+                
+                logContainer.appendChild(logEntry);
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+            
+            function addLogEvent(message, type) {
+                const logEvent = document.createElement('div');
+                logEvent.className = `log-event ${type}`;
+                logEvent.textContent = message;
+                
+                logContainer.appendChild(logEvent);
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+            
+            // ---------- Initialization ----------
+            async function init() {
+                // ... (rest of the code remains unchanged)
+            }
+            
+            init();
+        
+    }</script>
+    </body>
+</html>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Les Profondeurs - DÃƒÆ’Ã‚Â©tails d'Exploration</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #111;
+            color: #eee;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+        }
+        
+        .panel {
+            background-color: #222;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ffcc00;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+        
+        h2 {
+            color: #ffcc00;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        .leaderboard-item, .donor-item, .clue-item, .discovery-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .leaderboard-item {
+            background-color: rgba(255, 204, 0, 0.1);
+            border-left: 3px solid #ffcc00;
+            display: flex;
+            align-items: center;
+        }
+        
+        .donor-item {
+            background-color: rgba(100, 100, 255, 0.1);
+            border-left: 3px solid #6464ff;
+        }
+        
+        .clue-item {
+            background-color: rgba(255, 100, 100, 0.1);
+            border-left: 3px solid #ff6464;
+        }
+        
+        .discovery-item {
+            background-color: rgba(100, 255, 100, 0.1);
+            border-left: 3px solid #64ff64;
+        }
+        
+        .rank {
+            width: 40px;
+            height: 40px;
+            background-color: #ffcc00;
+            color: #111;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .user-info {
+            flex-grow: 1;
+        }
+        
+        .username {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .amount {
+            color: #ffcc00;
+            font-weight: bold;
+            margin-left: auto;
+            font-size: 18px;
+        }
+        
+        .timestamp {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .clue-title, .discovery-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .clue-description, .discovery-description {
+            color: #ccc;
+        }
+        
+        .dashboard {
+            padding: 15px;
+            background-color: #333;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .nav-button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-button:hover {
+            background-color: #444;
+        }
+        
+        .refresh-button {
+            background-color: #2c5282;
+        }
+        
+        .return-button {
+            background-color: #822c2c;
+        }
+        
+        @media (max-width: 1100px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Ajouter des styles pour l'adaptation mobile */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+            
+            h2 {
+                font-size: 16px;
+            }
+            
+            .container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .panel {
+                height: auto;
+                max-height: 300px;
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .dashboard {
+                flex-wrap: wrap;
+                padding: 10px;
+                gap: 8px;
+                justify-content: center;
+            }
+            
+            .stat {
+                flex: 0 0 45%;
+                margin-bottom: 8px;
+            }
+            
+            .stat-value {
+                font-size: 18px;
+            }
+            
+            .stat-label {
+                font-size: 11px;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+                margin: 10px 0;
+            }
+            
+            .nav-button {
+                width: 80%;
+                margin: 5px 0;
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            .leaderboard-item, .donor-item, .clue-item, .discovery-item {
+                padding: 8px;
+                margin-bottom: 8px;
+            }
+            
+            .rank {
+                width: 30px;
+                height: 30px;
+                margin-right: 8px;
+                font-size: 12px;
+            }
+            
+            .username {
+                font-size: 14px;
+            }
+            
+            .amount {
+                font-size: 14px;
+            }
+            
+            .timestamp {
+                font-size: 10px;
+            }
+            
+            .clue-title, .discovery-title {
+                font-size: 14px;
+            }
+            
+            .clue-description, .discovery-description {
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                gap: 10px;
+            }
+            
+            .panel {
+                padding: 8px;
+                max-height: 250px;
+            }
+            
+            .dashboard {
+                padding: 8px;
+            }
+            
+            .stat {
+                flex: 0 0 100%;
+                margin-bottom: 5px;
+            }
+            
+            .nav-button {
+                width: 95%;
+                margin: 4px 0;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Les Profondeurs - DÃƒÆ’Ã‚Â©tails d'Exploration</h1>
+    
+    <div class="nav-buttons">
+        <button class="nav-button refresh-button" onclick="refreshData()">RafraÃƒÆ’Ã‚Â®chir les donnÃƒÆ’Ã‚Â©es</button>
+        <button class="nav-button return-button" onclick="window.location.href='sethos_ai.html'">Retourner ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l'exploration</button>
+    </div>
+    
+    <div class="dashboard">
+        <div class="stat">
+            <div class="stat-value" id="total-donations">0 ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬</div>
+            <div class="stat-label">Total des dons</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="total-donors">0</div>
+            <div class="stat-label">Nombre de donateurs</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="total-clues">0/0</div>
+            <div class="stat-label">Indices dÃƒÆ’Ã‚Â©couverts</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="total-discoveries">0/0</div>
+            <div class="stat-label">DÃƒÆ’Ã‚Â©couvertes rÃƒÆ’Ã‚Â©alisÃƒÆ’Ã‚Â©es</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="story-progress">0%</div>
+            <div class="stat-label">Progression de l'histoire</div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="panel">
+            <h2>Classement des Explorateurs (Top 100)</h2>
+            <div id="leaderboard-list"></div>
+        </div>
+        
+        <div class="panel">
+            <h2>Contributeurs RÃƒÆ’Ã‚Â©cents</h2>
+            <div id="donors-list"></div>
+        </div>
+        
+        <div class="panel">
+            <h2>Indices DÃƒÆ’Ã‚Â©couverts</h2>
+            <div id="clues-list"></div>
+        </div>
+        
+        <div class="panel">
+            <h2>DÃƒÆ’Ã‚Â©couvertes & ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nements</h2>
+            <div id="discoveries-list"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Fonction pour rÃƒÆ’Ã‚Â©cupÃƒÆ’Ã‚Â©rer les donnÃƒÆ’Ã‚Â©es depuis localStorage ou la page principale
+        function loadData() {
+            // Essayer de rÃƒÆ’Ã‚Â©cupÃƒÆ’Ã‚Â©rer les donnÃƒÆ’Ã‚Â©es depuis la page principale
+            if (window.opener && window.opener.window) {
+                try {
+                    // RÃƒÆ’Ã‚Â©cupÃƒÆ’Ã‚Â©rer les donnÃƒÆ’Ã‚Â©es depuis la page principale
+                    fetchDataFromMain();
+                    return;
+                } catch (e) {
+                    console.error("Erreur lors de la rÃƒÆ’Ã‚Â©cupÃƒÆ’Ã‚Â©ration des donnÃƒÆ’Ã‚Â©es depuis la page principale:", e);
+                }
+            }
+            
+            // Sinon, essayer de rÃƒÆ’Ã‚Â©cupÃƒÆ’Ã‚Â©rer depuis localStorage
+            fetchDataFromLocalStorage();
+        }
+        
+        function fetchDataFromMain() {
+            if (!window.opener) return;
+            
+            try {
+                // RÃƒÆ’Ã‚Â©cupÃƒÆ’Ã‚Â©rer les donnÃƒÆ’Ã‚Â©es - tentative d'accÃƒÆ’Ã‚Â¨s direct aux variables du window parent
+                const data = {
+                    leaderboard: window.opener.leaderboard || [],
+                    storyHistory: window.opener.storyHistory || [],
+                    discoveredClues: window.opener.discoveredClues || [],
+                    totalDonations: window.opener.totalDonations || 0,
+                    storyProgress: window.opener.storyProgress || 0,
+                    STORY_ELEMENTS: window.opener.STORY_ELEMENTS || { clues: [], mysteries: [] }
+                };
+                
+                // Synchroniser avec localStorage pour pouvoir recharger plus tard
+                localStorage.setItem('explorationData', JSON.stringify(data));
+                
+                // Afficher les donnÃƒÆ’Ã‚Â©es
+                displayData(data);
+                
+                // Journaliser le succÃƒÆ’Ã‚Â¨s pour debug
+                console.log("DonnÃƒÆ’Ã‚Â©es rÃƒÆ’Ã‚Â©cupÃƒÆ’Ã‚Â©rÃƒÆ’Ã‚Â©es avec succÃƒÆ’Ã‚Â¨s depuis la page principale");
+            } catch (e) {
+                console.error("Erreur lors de la rÃƒÆ’Ã‚Â©cupÃƒÆ’Ã‚Â©ration des donnÃƒÆ’Ã‚Â©es depuis la page principale:", e);
+                fetchDataFromLocalStorage();
+            }
+        }
+        
+        function fetchDataFromLocalStorage() {
+            const storedData = localStorage.getItem('explorationData');
+            if (storedData) {
+                try {
+                    const data = JSON.parse(storedData);
+                    displayData(data);
+                } catch (e) {
+                    console.error("Erreur lors du parsing des donnÃƒÆ’Ã‚Â©es:", e);
+                    displayEmptyData();
+                }
+            } else {
+                displayEmptyData();
+            }
+        }
+        
+        function displayEmptyData() {
+            document.getElementById('leaderboard-list').innerHTML = '<div class="leaderboard-item">Aucune donnÃƒÆ’Ã‚Â©e disponible</div>';
+            document.getElementById('donors-list').innerHTML = '<div class="donor-item">Aucune donnÃƒÆ’Ã‚Â©e disponible</div>';
+            document.getElementById('clues-list').innerHTML = '<div class="clue-item">Aucune donnÃƒÆ’Ã‚Â©e disponible</div>';
+            document.getElementById('discoveries-list').innerHTML = '<div class="discovery-item">Aucune donnÃƒÆ’Ã‚Â©e disponible</div>';
+        }
+        
+        function displayData(data) {
+            // Mettre ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  jour les statistiques
+            document.getElementById('total-donations').textContent = `${data.totalDonations} ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬`;
+            document.getElementById('total-donors').textContent = data.leaderboard ? data.leaderboard.length : 0;
+            document.getElementById('story-progress').textContent = `${Math.round(data.storyProgress * 100)}%`;
+            
+            const totalClues = data.STORY_ELEMENTS && data.STORY_ELEMENTS.clues ? data.STORY_ELEMENTS.clues.length : 0;
+            const discoveredCluesCount = data.discoveredClues ? data.discoveredClues.length : 0;
+            document.getElementById('total-clues').textContent = `${discoveredCluesCount}/${totalClues}`;
+            
+            const totalDiscoveries = data.STORY_ELEMENTS && data.STORY_ELEMENTS.mysteries ? data.STORY_ELEMENTS.mysteries.length : 0;
+            const solvedMysteriesCount = data.STORY_ELEMENTS && data.STORY_ELEMENTS.mysteries ? 
+                data.STORY_ELEMENTS.mysteries.filter(m => m.solved).length : 0;
+            document.getElementById('total-discoveries').textContent = `${solvedMysteriesCount}/${totalDiscoveries}`;
+            
+            // Afficher le leaderboard
+            displayLeaderboard(data.leaderboard || []);
+            
+            // Afficher les donateurs rÃƒÆ’Ã‚Â©cents (en triant par timestamp)
+            const recentDonors = data.leaderboard ? [...data.leaderboard].sort((a, b) => (b.lastDonation || 0) - (a.lastDonation || 0)).slice(0, 20) : [];
+            displayDonors(recentDonors);
+            
+            // Afficher les indices dÃƒÆ’Ã‚Â©couverts
+            displayClues(data.STORY_ELEMENTS ? data.STORY_ELEMENTS.clues.filter(clue => data.discoveredClues && data.discoveredClues.includes(clue.id)) : []);
+            
+            // Afficher les dÃƒÆ’Ã‚Â©couvertes (via l'historique)
+            displayDiscoveries(data.storyHistory || []);
+        }
+        
+        function displayLeaderboard(leaderboard) {
+            const container = document.getElementById('leaderboard-list');
+            container.innerHTML = '';
+            
+            if (!leaderboard || leaderboard.length === 0) {
+                container.innerHTML = '<div class="leaderboard-item">Aucun donateur</div>';
+                return;
+            }
+            
+            leaderboard.forEach((entry, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                
+                const rank = document.createElement('div');
+                rank.className = 'rank';
+                rank.textContent = index + 1;
+                
+                const userInfo = document.createElement('div');
+                userInfo.className = 'user-info';
+                
+                const username = document.createElement('div');
+                username.className = 'username';
+                username.textContent = entry.username;
+                
+                const amount = document.createElement('div');
+                amount.className = 'amount';
+                amount.textContent = `${entry.amount} ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬`;
+                
+                userInfo.appendChild(username);
+                
+                item.appendChild(rank);
+                item.appendChild(userInfo);
+                item.appendChild(amount);
+                
+                container.appendChild(item);
+            });
+        }
+        
+        function displayDonors(donors) {
+            const container = document.getElementById('donors-list');
+            container.innerHTML = '';
+            
+            if (!donors || donors.length === 0) {
+                container.innerHTML = '<div class="donor-item">Aucun donateur rÃƒÆ’Ã‚Â©cent</div>';
+                return;
+            }
+            
+            donors.forEach(donor => {
+                const item = document.createElement('div');
+                item.className = 'donor-item';
+                
+                const username = document.createElement('div');
+                username.className = 'username';
+                username.textContent = donor.username;
+                
+                const amount = document.createElement('div');
+                amount.className = 'amount';
+                amount.textContent = `${donor.amount} ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬`;
+                
+                const timestamp = document.createElement('div');
+                timestamp.className = 'timestamp';
+                if (donor.lastDonation) {
+                    const date = new Date(donor.lastDonation);
+                    timestamp.textContent = `Dernier don: ${date.toLocaleString()}`;
+                } else {
+                    timestamp.textContent = "Date inconnue";
+                }
+                
+                item.appendChild(username);
+                item.appendChild(amount);
+                item.appendChild(timestamp);
+                
+                container.appendChild(item);
+            });
+        }
+        
+        function displayClues(clues) {
+            const container = document.getElementById('clues-list');
+            container.innerHTML = '';
+            
+            if (!clues || clues.length === 0) {
+                container.innerHTML = '<div class="clue-item">Aucun indice dÃƒÆ’Ã‚Â©couvert</div>';
+                return;
+            }
+            
+            clues.forEach(clue => {
+                const item = document.createElement('div');
+                item.className = 'clue-item';
+                
+                const title = document.createElement('div');
+                title.className = 'clue-title';
+                title.textContent = clue.title || `Indice #${clue.id}`;
+                
+                const description = document.createElement('div');
+                description.className = 'clue-description';
+                description.textContent = clue.text || "Description non disponible";
+                
+                item.appendChild(title);
+                item.appendChild(description);
+                
+                container.appendChild(item);
+            });
+        }
+        
+        function displayDiscoveries(history) {
+            const container = document.getElementById('discoveries-list');
+            container.innerHTML = '';
+            
+            if (!history || history.length === 0) {
+                container.innerHTML = '<div class="discovery-item">Aucune dÃƒÆ’Ã‚Â©couverte enregistrÃƒÆ’Ã‚Â©e</div>';
+                return;
+            }
+            
+            // Filter for discoveries and milestones
+            const discoveries = history.filter(item => 
+                item.type === 'discovery' || 
+                item.type === 'milestone' || 
+                item.type === 'event'
+            );
+            
+            discoveries.forEach(discovery => {
+                const item = document.createElement('div');
+                item.className = 'discovery-item';
+                
+                // Different styling based on type
+                if (discovery.type === 'milestone') {
+                    item.style.borderLeftColor = '#ffcc00';
+                    item.style.backgroundColor = 'rgba(255, 204, 0, 0.1)';
+                } else if (discovery.type === 'event') {
+                    item.style.borderLeftColor = '#ff6464';
+                    item.style.backgroundColor = 'rgba(255, 100, 100, 0.1)';
+                }
+                
+                const title = document.createElement('div');
+                title.className = 'discovery-title';
+                
+                // Set title based on type
+                if (discovery.type === 'milestone') {
+                    title.textContent = "Progression narrative";
+                } else if (discovery.type === 'discovery') {
+                    title.textContent = "DÃƒÆ’Ã‚Â©couverte";
+                } else if (discovery.type === 'event') {
+                    title.textContent = "ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°vÃƒÆ’Ã‚Â©nement spÃƒÆ’Ã‚Â©cial";
+                }
+                
+                const description = document.createElement('div');
+                description.className = 'discovery-description';
+                description.textContent = discovery.content;
+                
+                const timestamp = document.createElement('div');
+                timestamp.className = 'timestamp';
+                timestamp.textContent = discovery.timestamp;
+                
+                item.appendChild(title);
+                item.appendChild(description);
+                item.appendChild(timestamp);
+                
+                container.appendChild(item);
+            });
+        }
+        
+        // Ajouter une mÃƒÆ’Ã‚Â©thode pour permettre d'envoyer des donnÃƒÆ’Ã‚Â©es depuis la page principale
+        window.updateExplorationData = function(data) {
+            console.log("Mise ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  jour des donnÃƒÆ’Ã‚Â©es reÃƒÆ’Ã‚Â§ue");
+            localStorage.setItem('explorationData', JSON.stringify(data));
+            displayData(data);
+        };
+        
+        // Informer la page principale que cette page est prÃƒÆ’Ã‚Âªte ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  recevoir des donnÃƒÆ’Ã‚Â©es
+        function notifyMainPage() {
+            if (window.opener) {
+                try {
+                    // VÃƒÆ’Ã‚Â©rifie si la fonction existe dans la page principale
+                    if (typeof window.opener.sendDataToExplorationDetails === 'function') {
+                        window.opener.sendDataToExplorationDetails();
+                        console.log("Notification envoyÃƒÆ’Ã‚Â©e ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  la page principale");
+                    }
+                } catch (e) {
+                    console.error("Impossible de notifier la page principale:", e);
+                }
+            }
+        }
+
+        function refreshData() {
+            console.log("RafraÃƒÆ’Ã‚Â®chissement des donnÃƒÆ’Ã‚Â©es...");
+            loadData();
+            notifyMainPage();
+            // Animation pour montrer que les donnÃƒÆ’Ã‚Â©es ont ÃƒÆ’Ã‚Â©tÃƒÆ’Ã‚Â© rafraÃƒÆ’Ã‚Â®chies
+            document.body.style.opacity = 0.7;
+            setTimeout(() => {
+                document.body.style.opacity = 1;
+            }, 300);
+        }
+        
+        // Charger les donnÃƒÆ’Ã‚Â©es au chargement de la page
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            notifyMainPage();
+        });
+        
+        // RafraÃƒÆ’Ã‚Â®chir pÃƒÆ’Ã‚Â©riodiquement
+        setInterval(refreshData, 5000); // Toutes les 5 secondes au lieu de 30
+    </script>
+</body>
+</html> 

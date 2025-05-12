@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframe Test - Sethos AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+        }
+        
+        .iframe-container {
+            width: 350px;
+            height: 620px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test d'Affichage Iframe - Sethos AI</h1>
+    <div class="iframe-container" id="iframe-container">
+        <iframe 
+            id="sethos-iframe" 
+            src="sethos_ai.html" 
+            sandbox="allow-same-origin allow-scripts"
+            allow="camera; microphone; autoplay"
+        ></iframe>
+    </div>
+    
+    <div class="controls">
+        <button id="refresh-btn">Rafraîchir</button>
+        <button id="resize-btn">Ajuster Zoom</button>
+    </div>
+    
+    <script>
+        // Attendre que l'iframe soit chargée
+        window.addEventListener('load', function() {
+            const iframe = document.getElementById('sethos-iframe');
+            const refreshBtn = document.getElementById('refresh-btn');
+            const resizeBtn = document.getElementById('resize-btn');
+            
+            // Fonction pour envoyer des styles à l'iframe
+            function sendStyles() {
+                // Structure du message avec les styles à appliquer
+                const styleMessage = {
+                    type: "applyStyles",
+                    styles: `
+                        html, body {
+                            width: 100% !important;
+                            height: 100% !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            overflow: hidden !important;
+                            background-color: #000 !important;
+                        }
+                        
+                        #gameCanvas, canvas, video, img {
+                            position: absolute !important;
+                            top: 50% !important;
+                            left: 50% !important;
+                            transform: translate(-50%, -50%) !important;
+                            max-width: 100% !important;
+                            max-height: 100% !important;
+                        }
+                    `
+                };
+                
+                // Envoyer le message à l'iframe
+                iframe.contentWindow.postMessage(styleMessage, "*");
+                console.log("Styles envoyés à l'iframe");
+            }
+            
+            // Envoyer les styles après le chargement de l'iframe
+            iframe.addEventListener('load', function() {
+                setTimeout(sendStyles, 500); // Attendre un peu pour s'assurer que l'iframe est prête
+            });
+            
+            // Bouton de rafraîchissement
+            refreshBtn.addEventListener('click', function() {
+                iframe.src = iframe.src; // Recharger l'iframe
+            });
+            
+            // Bouton d'ajustement de zoom
+            resizeBtn.addEventListener('click', function() {
+                sendStyles();
+                
+                // Essayer d'appeler la fonction de zoom dans l'iframe
+                iframe.contentWindow.postMessage({
+                    type: "calculateZoom"
+                }, "*");
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,75 @@
+/* TikTok Preview CSS */
+body.tiktok-preview {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #000;
+}
+
+/* Container TikTok principal avec ratio 9:16 */
+.tiktok-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tiktok-frame {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: #000;
+}
+
+/* Ajustements pour l'interface du jeu dans TikTok */
+.tiktok-frame canvas {
+    width: 100% !important;
+    height: auto !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    position: absolute !important;
+    left: 0 !important;
+}
+
+/* Correction pour les éléments absolus */
+.tiktok-frame div[style*="position: absolute"] {
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
+/* Cacher les barres de défilement */
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+/* Format vertical pour tous les éléments d'UI */
+.progress-container, #donation-panel, #top100-panel, #exploration-journal {
+    max-width: 90% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+
+/* Styles pour les textes narratifs */
+#narrative-display {
+    width: 90% !important;
+    max-width: 100% !important;
+}
+
+/* Correction pour les animations et transitions */
+@keyframes tiktok-scale {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.tiktok-animation {
+    animation: tiktok-scale 0.5s ease-in-out;
+} 
